@@ -1,0 +1,1183 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <!-- Viewport yang aman untuk mencegah layout break pada double-tap zoom di mobile -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>L'Oréal Product Intelligence Engine | Corporate</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,600;1,600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: { 
+                        sans: ['Inter', 'sans-serif'], 
+                        serif: ['Playfair Display', 'serif'], 
+                        mono: ['JetBrains Mono', 'monospace'] 
+                    },
+                    colors: {
+                        brand: { 
+                            50: '#f9fafb', 100: '#f3f4f6', 200: '#e5e7eb', 300: '#d1d5db', 400: '#9ca3af', 
+                            500: '#6b7280', 600: '#4b5563', 700: '#374151', 800: '#1f2937', 900: '#111827', black: '#000000'
+                        },
+                        loreal: {
+                            100: '#F3E5AB', 200: '#E6D288', 300: '#DABD65', 400: '#CFA841',
+                            500: '#C5A059', 600: '#A68548', 700: '#866A38', 800: '#675028',
+                        },
+                        dark: { bg: '#050505', card: '#0a0a0a', border: '#1f1f1f' }
+                    },
+                    boxShadow: {
+                        'luxury': '0 4px 20px -2px rgba(0, 0, 0, 0.05)',
+                        'glow': '0 0 15px rgba(197, 160, 89, 0.15)',
+                    },
+                    animation: {
+                        'fade-in': 'fadeIn 0.5s ease-out forwards',
+                        'slide-up': 'slideUp 0.6s ease-out forwards',
+                        'shimmer': 'shimmer 2s linear infinite',
+                    },
+                    keyframes: {
+                        fadeIn: { '0%': { opacity: '0' }, '100%': { opacity: '1' } },
+                        slideUp: { '0%': { transform: 'translateY(20px)', opacity: '0' }, '100%': { transform: 'translateY(0)', opacity: '1' } },
+                        shimmer: { '0%': { backgroundPosition: '200% center' }, '100%': { backgroundPosition: '-200% center' } }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Base Reset & Smooth Scrolling */
+        html { scroll-behavior: smooth; }
+        body { background-color: #ffffff; color: #111111; overflow-x: hidden; -webkit-font-smoothing: antialiased; transition: background-color 0.3s ease, color 0.3s ease; }
+        
+        /* Dark Mode Overrides */
+        .dark body { background-color: #000000; color: #f3f4f6; }
+
+        /* Sidebar & Panel Styles */
+        .solid-panel { background: #ffffff; border-right: 1px solid #e5e5e5; transition: background-color 0.3s ease, border-color 0.3s ease; }
+        .dark .solid-panel { background: #000000; border-right: 1px solid #1a1a1a; }
+
+        /* Content Cards */
+        .content-card { background: #ffffff; border: 1px solid #e5e5e5; transition: all 0.3s ease; }
+        .dark .content-card { background: #0a0a0a; border: 1px solid #1a1a1a; }
+        .dark .content-card:hover { border-color: #C5A059; box-shadow: 0 4px 24px -5px rgba(197, 160, 89, 0.1); }
+
+        /* Main Background */
+        .main-bg { background-color: #f9fafb; transition: background-color 0.3s ease; }
+        .dark .main-bg { background-color: #000000; }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 3px; }
+        .dark ::-webkit-scrollbar-thumb { background: #333333; }
+        .dark ::-webkit-scrollbar-thumb:hover { background: #C5A059; }
+
+        /* Search Input */
+        .search-input { background: #ffffff; border: 1px solid #e5e5e5; color: #000000; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        .dark .search-input { background: #0a0a0a; border: 1px solid #333333; color: #ffffff; }
+        .search-input:focus { outline: none; border-color: #000000; background: #ffffff; }
+        .dark .search-input:focus { border-color: #C5A059; background: #0a0a0a; box-shadow: 0 0 0 1px #C5A05920; }
+
+        /* Grid Layout (Desktop Default) */
+        .data-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 2rem; }
+
+        /* Horizontal Slider (Mobile/Slide Mode) */
+        .product-slider {
+            display: flex;
+            overflow-x: auto;
+            scroll-snap-type: x mandatory;
+            gap: 1.5rem;
+            padding-bottom: 2rem; /* Space for shadow/scrollbar */
+            padding-right: 1rem; /* Ensure last item isn't cut off */
+            scrollbar-width: none; /* Firefox */
+            -ms-overflow-style: none; /* IE/Edge */
+        }
+        .product-slider::-webkit-scrollbar { display: none; }
+        
+        .product-card { transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94), box-shadow 0.4s ease; position: relative; overflow: hidden; }
+        .product-card:hover { transform: translateY(-6px); }
+        
+        /* Animation Wrapper - Shared by Products & News */
+        .card-wrapper { 
+            opacity: 0; 
+            transform: translateY(30px); 
+            transition: opacity 0.8s ease-out, transform 0.8s ease-out; 
+            flex-shrink: 0;
+            scroll-snap-align: start; 
+            height: auto; /* Auto height for content adaptation */
+            display: flex; /* Flex for alignment */
+            flex-direction: column;
+        }
+        .card-wrapper.is-visible { opacity: 1; transform: translateY(0); }
+
+        /* Mode Slide Dimensions */
+        .mode-slide .card-wrapper {
+            width: 85vw;  
+            max-width: 400px;
+        }
+        @media (min-width: 768px) {
+            .mode-slide .card-wrapper {
+                width: 45vw; 
+                max-width: 450px;
+            }
+        }
+        @media (min-width: 1280px) {
+            .mode-slide .card-wrapper {
+                width: 30vw; 
+                max-width: 420px;
+            }
+        }
+
+        /* Badges */
+        .badge-success { background: rgba(16, 185, 129, 0.1); color: #059669; border: 1px solid rgba(16, 185, 129, 0.2); font-weight: 600; letter-spacing: 0.02em;}
+        .dark .badge-success { background: rgba(16, 185, 129, 0.05); color: #34d399; border-color: rgba(16, 185, 129, 0.1); }
+        .badge-warning { background: rgba(245, 158, 11, 0.1); color: #d97706; border: 1px solid rgba(245, 158, 11, 0.2); font-weight: 600; letter-spacing: 0.02em;}
+        .dark .badge-warning { background: rgba(245, 158, 11, 0.05); color: #fbbf24; border-color: rgba(245, 158, 11, 0.1); }
+        .badge-error { background: rgba(239, 68, 68, 0.1); color: #dc2626; border: 1px solid rgba(239, 68, 68, 0.2); font-weight: 600; letter-spacing: 0.02em;}
+        .dark .badge-error { background: rgba(239, 68, 68, 0.05); color: #f87171; border-color: rgba(239, 68, 68, 0.1); }
+
+        .tag { font-size: 0.65rem; padding: 0.25rem 0.75rem; border-radius: 9999px; border: 1px solid #e5e5e5; background: #ffffff; color: #6b7280; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 500; }
+        .dark .tag { background: #111111; color: #9ca3af; border-color: #333333; }
+
+        /* Mobile Sidebar Transition */
+        #mobile-sidebar { transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1); box-shadow: 10px 0 40px rgba(0,0,0,0.5); z-index: 50; }
+        #mobile-sidebar.hidden-sidebar { transform: translateX(-105%); }
+
+        /* Loading Screen */
+        #loader-overlay {
+            background-color: #000000;
+            transition: opacity 0.8s ease-out, transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .loader-hidden {
+            opacity: 0;
+            pointer-events: none;
+            transform: scale(1.1);
+        }
+        .animate-width { width: 0; animation: growLine 1.5s ease-out forwards; }
+        @keyframes growLine { to { width: 100%; } }
+        .shimmer-text {
+            background: linear-gradient(to right, #ffffff 0%, #f3f4f6 50%, #ffffff 100%);
+            background-size: 200% auto;
+            color: transparent;
+            -webkit-background-clip: text;
+            background-clip: text;
+        }
+    </style>
+</head>
+<body class="h-screen flex flex-col md:flex-row overflow-hidden antialiased text-brand-900 dark:text-gray-100 selection:bg-loreal-500 selection:text-white">
+    
+    <!-- LOADING OVERLAY -->
+    <div id="loader-overlay" class="fixed inset-0 z-[9999] flex flex-col items-center justify-center">
+        <div class="text-center transform transition-transform duration-700">
+            <div class="relative inline-block mb-8 group">
+                <div class="text-6xl md:text-8xl font-serif italic font-bold text-white tracking-tighter">L</div>
+                <div class="absolute inset-0 bg-loreal-500/20 blur-2xl -z-10 rounded-full"></div>
+            </div>
+            <div class="h-8 md:h-10 overflow-hidden relative mb-6">
+                <div class="shimmer-text text-2xl md:text-4xl font-serif tracking-[0.3em] uppercase">L'Oréal</div>
+            </div>
+            <div class="w-32 md:w-48 h-[1px] bg-white/20 mx-auto animate-width relative">
+                <div class="absolute top-0 left-0 h-full w-1/2 bg-loreal-500/50"></div>
+                <div class="absolute top-0 right-0 h-full w-1/2 bg-loreal-500/50"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SIDEBAR BACKDROP (Mobile) -->
+    <div id="sidebar-backdrop" onclick="UI.toggleMobileSidebar()" class="fixed inset-0 bg-black/80 z-30 hidden md:hidden transition-opacity opacity-0 backdrop-blur-sm"></div>
+
+    <!-- SIDEBAR -->
+    <aside id="desktop-sidebar" class="w-80 solid-panel hidden md:flex flex-col shrink-0 z-40 h-full absolute md:relative transition-transform duration-300">
+        <div class="p-8 border-b border-gray-200 dark:border-gray-800 flex justify-between items-center md:justify-start md:gap-4">
+            <div class="flex items-center gap-3">
+                <div class="w-8 h-8 bg-black dark:bg-white rounded-full flex items-center justify-center">
+                    <span class="text-white dark:text-black font-serif font-bold italic text-lg">L</span>
+                </div>
+                <div class="flex flex-col">
+                    <span class="font-serif italic text-xl font-semibold tracking-wide text-black dark:text-white leading-none">L'Oréal</span>
+                    <span class="text-[10px] uppercase tracking-[0.2em] text-gray-500 dark:text-gray-400 mt-1">Engine</span>
+                </div>
+            </div>
+            <button onclick="UI.toggleMobileSidebar()" class="md:hidden text-gray-400 hover:text-black dark:hover:text-white transition-colors p-2 -mr-2">
+                <i data-lucide="x" class="w-6 h-6"></i>
+            </button>
+        </div>
+
+        <div class="flex-1 overflow-y-auto py-6 px-6 space-y-10">
+            <nav class="space-y-2">
+                <a href="#" onclick="Router.navigate('home'); UI.toggleMobileSidebar();" class="nav-item flex items-center gap-4 px-4 py-3 rounded-lg text-sm font-medium transition-all group border border-transparent bg-gray-50 dark:bg-white/5 text-black dark:text-white border-gray-200 dark:border-white/10 hover:border-loreal-500/50 hover:shadow-luxury" id="nav-home">
+                    <i data-lucide="layout-grid" class="w-4 h-4 text-loreal-500"></i> Product Catalog
+                </a>
+                <a href="#" onclick="Router.navigate('analytics'); UI.toggleMobileSidebar();" class="nav-item flex items-center gap-4 px-4 py-3 rounded-lg text-sm font-medium text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-white/5 hover:text-black dark:hover:text-white transition-all" id="nav-analytics">
+                    <i data-lucide="newspaper" class="w-4 h-4"></i> L'Oréal News
+                </a>
+                <a href="#" onclick="Router.navigate('admin'); UI.toggleMobileSidebar();" class="nav-item flex items-center gap-4 px-4 py-3 rounded-lg text-sm font-medium text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-white/5 hover:text-black dark:hover:text-white transition-all" id="nav-admin">
+                    <i data-lucide="database" class="w-4 h-4"></i> Inventory Index
+                </a>
+            </nav>
+
+            <div id="filter-panel" class="animate-fade-in space-y-8">
+                <div class="px-1 text-[10px] font-bold text-gray-400 dark:text-gray-600 uppercase tracking-[0.15em] flex justify-between items-center">
+                    <span>Filters</span>
+                    <button onclick="Engine.resetFilters()" class="text-loreal-600 hover:text-loreal-500 transition-colors">Reset</button>
+                </div>
+                
+                <div>
+                    <div class="px-1 text-xs text-gray-500 dark:text-gray-400 font-medium mb-3 uppercase tracking-wide">Product Range</div>
+                    <div class="space-y-1.5" id="range-filters"></div>
+                </div>
+
+                <div>
+                    <div class="px-1 text-xs text-gray-500 dark:text-gray-400 font-medium mb-3 uppercase tracking-wide">Skin Concerns</div>
+                    <div class="space-y-1.5" id="concern-filters"></div>
+                </div>
+
+                <div class="px-1 pt-4">
+                    <div class="flex justify-between text-xs text-gray-500 dark:text-gray-400 mb-3 uppercase tracking-wide font-medium">
+                        <span>Max Price</span>
+                        <span id="price-val" class="font-mono text-black dark:text-loreal-500">ALL</span>
+                    </div>
+                    <input type="range" id="price-range" min="0" max="500000" step="5000" class="w-full h-1 bg-gray-200 dark:bg-gray-800 rounded-lg appearance-none cursor-pointer accent-loreal-500">
+                </div>
+            </div>
+        </div>
+
+        <div class="p-8 border-t border-gray-200 dark:border-gray-800 mt-auto">
+            <div class="text-[10px] text-gray-400 text-center uppercase tracking-widest font-medium">
+                <span class="font-bold text-gray-900 dark:text-white block mb-1">© 2023 L'Oréal</span>
+                Enterprise Product Intelligence
+            </div>
+        </div>
+    </aside>
+
+    <!-- MAIN CONTENT AREA -->
+    <main class="flex-1 flex flex-col relative overflow-hidden main-bg h-full">
+        <!-- Background Glows -->
+        <div class="absolute inset-0 pointer-events-none -z-10 overflow-hidden">
+            <div class="absolute top-[-10%] right-[-5%] w-[600px] h-[600px] bg-loreal-500/5 rounded-full blur-3xl opacity-30"></div>
+            <div class="absolute bottom-[-10%] left-[-5%] w-[400px] h-[400px] bg-gray-200/50 dark:bg-white/5 rounded-full blur-3xl opacity-30"></div>
+        </div>
+
+        <!-- Header -->
+        <header class="relative z-10 pt-10 pb-6 px-6 md:px-12 max-w-7xl mx-auto w-full shrink-0">
+            <!-- Mobile Header (Hamburger + Logo) -->
+            <div class="flex justify-between items-center mb-10 md:hidden">
+                <div class="flex items-center gap-2">
+                    <div class="w-6 h-6 bg-black dark:bg-white rounded-full flex items-center justify-center">
+                        <span class="text-white dark:text-black font-serif font-bold italic text-xs">L</span>
+                    </div>
+                    <span class="font-serif italic text-lg font-semibold tracking-wide text-black dark:text-white leading-none">L'Oréal</span>
+                </div>
+                <div class="flex items-center gap-3">
+                    <button onclick="UI.toggleTheme()" class="p-2.5 text-gray-600 dark:text-gray-400 bg-white dark:bg-white/10 border border-gray-200 dark:border-white/10 rounded-lg hover:border-black dark:hover:border-white transition-colors">
+                        <i id="theme-icon-mobile" data-lucide="moon" class="w-5 h-5"></i>
+                    </button>
+                    <button onclick="UI.toggleMobileSidebar()" class="p-2.5 text-gray-600 dark:text-gray-400 bg-white dark:bg-white/10 border border-gray-200 dark:border-white/10 rounded-lg hover:border-black dark:hover:border-white transition-colors">
+                        <i data-lucide="menu" class="w-5 h-5"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Page Title & Description -->
+            <div class="text-center md:text-left mb-10">
+                <h1 id="main-page-title" class="text-4xl md:text-6xl font-serif font-medium text-black dark:text-white mb-4 tracking-tight">Product Catalog</h1>
+                <p id="main-page-desc" class="text-gray-500 dark:text-gray-400 text-lg md:text-xl max-w-2xl mx-auto md:mx-0 font-light">
+                    Explore the collection by active ingredients, product line, or benefits.
+                </p>
+            </div>
+
+            <!-- Search Bar (Desktop Only) -->
+            <div id="search-container" class="relative max-w-3xl mx-auto group">
+                <div class="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none text-gray-400 group-focus-within:text-loreal-500 transition-colors duration-300">
+                    <i data-lucide="search" class="w-5 h-5"></i>
+                </div>
+                <input 
+                    type="text" 
+                    id="main-search" 
+                    placeholder="Search (e.g., 'Hyaluronic Acid', 'Revitalift')..." 
+                    class="search-input w-full h-14 md:h-16 pl-12 pr-24 rounded-full text-base shadow-luxury placeholder:text-gray-400"
+                    autocomplete="off"
+                >
+                <div class="absolute inset-y-0 right-2 flex items-center">
+                    <span class="hidden md:flex px-3 py-1.5 rounded-full bg-gray-100 dark:bg-white/5 text-gray-500 dark:text-gray-400 text-[10px] font-medium border border-transparent dark:border-white/10 mr-3 items-center gap-1.5">
+                        <kbd class="opacity-50">⌘</kbd><kbd class="opacity-50">K</kbd>
+                    </span>
+                    <button id="clear-search" class="p-2 text-gray-400 hover:text-black dark:hover:text-white transition-colors opacity-0 pointer-events-none rounded-full hover:bg-gray-100 dark:hover:bg-white/10">
+                        <i data-lucide="x" class="w-4 h-4"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Theme Toggle (Desktop) -->
+            <button onclick="UI.toggleTheme()" class="hidden md:flex absolute top-2 right-0 p-3 rounded-full bg-white dark:bg-white/10 border border-gray-200 dark:border-white/10 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-white/20 hover:border-black dark:hover:border-white transition-all shadow-sm z-20 items-center justify-center gap-2 group" title="Toggle Theme">
+                <i id="theme-icon-desktop" data-lucide="moon" class="w-5 h-5"></i>
+                <span class="text-xs font-bold opacity-0 group-hover:opacity-100 transition-opacity absolute top-full mt-1 whitespace-nowrap bg-black dark:bg-white text-white dark:text-black px-2 py-1 rounded text-[10px]">Theme</span>
+            </button>
+        </header>
+
+        <!-- Dynamic Viewport -->
+        <div id="view-viewport" class="flex-1 overflow-y-auto px-6 md:px-12 pb-24 scroll-smooth relative z-10 w-full"></div>
+    </main>
+
+    <!-- Right Sidebar (Desktop Only) -->
+    <aside id="right-sidebar" class="w-80 content-card hidden xl:flex flex-col z-20 h-full shrink-0 border-l border-transparent dark:border-white/5 transition-all duration-300">
+        <div class="p-6 border-b border-gray-100 dark:border-white/5">
+            <h3 class="font-serif italic text-lg text-black dark:text-white flex items-center gap-2">
+                <i data-lucide="trending-up" class="w-5 h-5 text-loreal-500 not-italic"></i> Market Summary
+            </h3>
+        </div>
+        <div class="flex-1 overflow-y-auto p-6 space-y-8">
+            <div>
+                <h4 class="text-[10px] font-bold text-gray-400 dark:text-gray-600 uppercase tracking-[0.15em] mb-6">Most Viewed</h4>
+                <div class="space-y-5" id="market-summary-list"></div>
+            </div>
+            <div class="pt-8 border-t border-gray-100 dark:border-white/5">
+                 <h4 class="text-[10px] font-bold text-gray-400 dark:text-gray-600 uppercase tracking-[0.15em] mb-5">Resources</h4>
+                 <div class="space-y-4">
+                     <a href="#" class="flex items-center gap-3 text-sm text-gray-600 dark:text-gray-400 hover:text-loreal-600 dark:hover:text-loreal-400 transition-colors group">
+                         <div class="p-1.5 rounded-md bg-gray-100 dark:bg-white/5 group-hover:bg-loreal-100 dark:group-hover:bg-loreal-500/10 transition-colors">
+                            <i data-lucide="download" class="w-4 h-4"></i>
+                         </div>
+                         Brand Guidelines
+                     </a>
+                     <a href="#" class="flex items-center gap-3 text-sm text-gray-600 dark:text-gray-400 hover:text-loreal-600 dark:hover:text-loreal-400 transition-colors group">
+                         <div class="p-1.5 rounded-md bg-gray-100 dark:bg-white/5 group-hover:bg-loreal-100 dark:group-hover:bg-loreal-500/10 transition-colors">
+                            <i data-lucide="file-text" class="w-4 h-4"></i>
+                         </div>
+                         Technical Sheets
+                     </a>
+                     <a href="#" class="flex items-center gap-3 text-sm text-gray-600 dark:text-gray-400 hover:text-loreal-600 dark:hover:text-loreal-400 transition-colors group">
+                         <div class="p-1.5 rounded-md bg-gray-100 dark:bg-white/5 group-hover:bg-loreal-100 dark:group-hover:bg-loreal-500/10 transition-colors">
+                            <i data-lucide="globe" class="w-4 h-4"></i>
+                         </div>
+                         Global Site
+                     </a>
+                 </div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- GLOBAL MODAL -->
+    <div id="detail-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4">
+        <div class="absolute inset-0 bg-black/80 backdrop-blur-md transition-opacity" onclick="NewsModal.close() || Modal.close()"></div>
+        <!-- Fix: Ensure modal allows internal scrolling on mobile and has max-height on desktop -->
+        <div class="relative bg-white dark:bg-[#0a0a0a] w-full h-full md:max-w-5xl md:max-h-[90vh] md:rounded-3xl shadow-2xl shadow-black/20 overflow-y-auto flex flex-col border border-gray-100 dark:border-white/10">
+            <button onclick="NewsModal.close() || Modal.close()" class="absolute top-4 right-4 z-10 p-2 rounded-full bg-gray-100 dark:bg-white/10 hover:bg-gray-200 dark:hover:bg-white/20 text-gray-500 hover:text-black dark:hover:text-white transition-all md:top-8 md:right-8">
+                <i data-lucide="x" class="w-6 h-6"></i>
+            </button>
+            <div id="modal-content" class="p-6 md:p-10 flex-1"></div>
+        </div>
+    </div>
+
+    <script>
+    const DB = {
+        products: (function() {
+            const ranges = ['Revitalift', 'Age Perfect', 'True Match', 'Infallible', 'Elvive', 'Men Expert'];
+            const concerns_list = ['Anti-Aging', 'Brightening', 'Acne', 'Hydrating', 'Oil Control', 'Sensitive Skin'];
+            const ingredients_list = ['Hyaluronic Acid', 'Niacinamide', 'Retinol', 'Vitamin C', 'Salicylic Acid', 'Ceramides', 'Peptides'];
+            
+            const list = [];
+            for(let i=1; i<=160; i++) {
+                const range = ranges[Math.floor(Math.random() * ranges.length)];
+                const cat = (range === 'Revitalift' || range === 'Age Perfect') ? 'Skincare' : 
+                            (range === 'True Match' || range === 'Infallible') ? 'Makeup' : 'Haircare';
+                
+                const pConcerns = [...concerns_list].sort(() => 0.5 - Math.random()).slice(0, 2);
+                
+                list.push({
+                    id: `SKU-${1000+i}`,
+                    name: `L'Oréal ${range} ${['Cream', 'Serum', 'Foundation', 'Shampoo', 'Moisturizer', 'Toner'][Math.floor(Math.random()*6)]} X${i}`,
+                    range: range,
+                    category: cat,
+                    concerns: pConcerns,
+                    price: Math.floor(Math.random() * 400000) + 50000,
+                    volume: Math.random() > 0.5 ? `${[30, 50, 100, 200][Math.floor(Math.random()*4)]}ml` : `${[5, 10, 30][Math.floor(Math.random()*3)]}g`,
+                    ingredients: [...ingredients_list].sort(() => 0.5 - Math.random()).slice(0, 3).join(', '),
+                    rating: (3.5 + Math.random() * 1.5).toFixed(1),
+                    stockStatus: Math.random() > 0.85 ? 'Low Stock' : (Math.random() > 0.95 ? 'Out of Stock' : 'In Stock'),
+                    image: `https://picsum.photos/seed/${i}/400/400`,
+                    description: `Advanced ${cat.toLowerCase()} formula featuring ${range} technology. Targeted for ${pConcerns.join(' & ')}.`
+                });
+            }
+            return list;
+        })(),
+        news: (function() {
+            const photoIds = [
+                '1612817288484-6f9861c98b98', '1596462502278-27bfdd403348', '1571781926291-c477ebfd024b', '1522337660859-02fbefca4702',
+                '1620916566398-39f1143ab7be', '1617897903246-719242758050', '1542601906990-b4d3fb778b09', '1515377905703-c4788e51af15',
+                '1612817288484-6f9861c98b98', '1571781926291-c477ebfd024b', '1522337660859-02fbefca4702', '1596462502278-27bfdd403348',
+                '1598304598126-90db4ebd295d', '1556227360-f5f4c09b6908', '1579783902614-4b554788d3e4', '1512413719758-e86c29f0b6c1',
+                '1515375359526-5d406287b899', '1526170336998-2f5d9127f6a8', '1586195746532-a0d3c5304224', '1596462502278-27bfdd403348'
+            ];
+
+            const originalNews = [
+                {
+                    id: 'n1',
+                    title: "L'Oréal Launches 'Age Perfect Cell Renewal'",
+                    category: "New Launch",
+                    type: "launch",
+                    date: "Oct 24, 2023",
+                    summary: "The new formula targets mature skin with 4x faster renewal.",
+                    image: "https://images.unsplash.com/photo-1620916566398-39f1143ab7be?w=800&q=80",
+                    content: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
+                },
+                {
+                    id: 'n2',
+                    title: "Global Trend: Why Glass Skin is Taking Over Market",
+                    category: "Trending",
+                    type: "trending",
+                    date: "Oct 22, 2023",
+                    summary: "Hydrating products are seeing a 150% spike in search volume.",
+                    image: "https://images.unsplash.com/photo-1617897903246-719242758050?w=800&q=80",
+                    content: "The 'Glass Skin' phenomenon, originating in K-beauty, has transcended borders to become a global standard for beauty."
+                },
+                {
+                    id: 'n3',
+                    title: "L'Oréal for the Future: 60% Plastic Reduction Goal",
+                    category: "Corporate",
+                    type: "corporate",
+                    date: "Oct 20, 2023",
+                    summary: "CEO announces major milestone in sustainability efforts.",
+                    image: "https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?w=800&q=80",
+                    content: "L'Oréal Group has announced an ambitious new target to reduce plastic usage in packaging by 60% by 2030."
+                },
+                {
+                    id: 'n4',
+                    title: "Innovation Lab: The Science of UV Protection",
+                    category: "Innovation",
+                    type: "innovation",
+                    date: "Oct 18, 2023",
+                    summary: "New research reveals the impact of blue light on skin aging.",
+                    image: "https://images.unsplash.com/photo-1515377905703-c4788e51af15?w=800&q=80",
+                    content: "Recent studies from L'Oréal's R&D centers highlight the long-term effects of High Energy Visible (HEV) light."
+                }
+            ];
+
+            const categories = ['Innovation', 'Trending', 'Corporate', 'Science', 'Lifestyle', 'Events'];
+            const topics = ['Skincare', 'Haircare', 'Makeup', 'Sustainability', 'Tech', 'Packaging', 'AI', 'Research'];
+            const adjectives = ['Advanced', 'Global', 'Sustainable', 'Digital', 'Revolutionary', 'Pure', 'Luxe', 'Smart'];
+            
+            const generatedNews = [];
+            for(let i=1; i<=100; i++) {
+                const cat = categories[Math.floor(Math.random() * categories.length)];
+                const topic = topics[Math.floor(Math.random() * topics.length)];
+                const adj = adjectives[Math.floor(Math.random() * adjectives.length)];
+                const id = `n${i + 4}`;
+                const m = Math.floor(Math.random() * 12) + 1;
+                const d = Math.floor(Math.random() * 28) + 1;
+                const date = `${m < 10 ? '0'+m : m}/${d}/2023`;
+                const photoId = photoIds[i % photoIds.length];
+                const image = `https://images.unsplash.com/photo-${photoId}?auto=format&fit=crop&w=800&q=80&sig=${i}`;
+
+                generatedNews.push({
+                    id: id,
+                    title: `L'Oréal ${adj} ${topic} Analysis: Part ${i}`,
+                    category: cat,
+                    type: cat.toLowerCase(),
+                    date: date,
+                    summary: `An in-depth look at how ${topic} is evolving in the ${cat} sector with ${adj} solutions.`,
+                    image: image,
+                    content: `This article explores the latest developments in L'Oréal's ${topic} division. We discuss the impact of ${adj} technologies on the ${cat} landscape. Key findings include a 15% increase in efficiency and a significant reduction in environmental footprint. Experts believe this marks a turning point for the industry as we move towards a more sustainable and inclusive future. Lorem ipsum dolor sit amet, consectetur adipiscing elit.`
+                });
+            }
+
+            return [...originalNews, ...generatedNews];
+        })()
+    };
+
+    const State = {
+        query: '',
+        range: 'All',
+        concerns: [],
+        maxPrice: 500000,
+        sortBy: 'relevance',
+        currentView: 'home',
+        viewMode: 'grid',
+        newsViewMode: 'grid'
+    };
+
+    const Engine = {
+        init() {
+            this.renderFilters();
+            
+            document.getElementById('main-search').addEventListener('input', Utils.debounce(this.handleSearch.bind(this), 300));
+            document.getElementById('main-search').addEventListener('focus', () => document.querySelector('.search-input').classList.add('ring-2', 'ring-loreal-500', 'dark:ring-loreal-500/50'));
+            
+            const priceRange = document.getElementById('price-range');
+            priceRange.addEventListener('input', (e) => {
+                State.maxPrice = Number(e.target.value);
+                document.getElementById('price-val').textContent = Utils.formatRupiah(State.maxPrice);
+                this.handleSearch();
+            });
+
+            document.getElementById('clear-search').addEventListener('click', () => {
+                document.getElementById('main-search').value = '';
+                State.query = '';
+                document.getElementById('clear-search').classList.add('opacity-0', 'pointer-events-none');
+                this.handleSearch();
+            });
+        },
+
+        handleSearch() {
+            const input = document.getElementById('main-search');
+            State.query = input.value.trim();
+            
+            if(State.query.length > 0) {
+                document.getElementById('clear-search').classList.remove('opacity-0', 'pointer-events-none');
+                DB.searches[State.query] = (DB.searches[State.query] || 0) + 1;
+            } else {
+                document.getElementById('clear-search').classList.add('opacity-0', 'pointer-events-none');
+            }
+
+            if (State.currentView === 'home') Router.renderHome();
+        },
+
+        filterProducts() {
+            let results = DB.products;
+
+            if (State.query) {
+                const q = State.query.toLowerCase();
+                results = results.filter(p => 
+                    p.name.toLowerCase().includes(q) || 
+                    p.ingredients.toLowerCase().includes(q) ||
+                    p.range.toLowerCase().includes(q) ||
+                    p.concerns.some(c => c.toLowerCase().includes(q))
+                );
+            }
+
+            if (State.range !== 'All') {
+                results = results.filter(p => p.range === State.range);
+            }
+
+            if (State.concerns.length > 0) {
+                results = results.filter(p => 
+                    State.concerns.some(c => p.concerns.includes(c))
+                );
+            }
+
+            results = results.filter(p => p.price <= State.maxPrice);
+
+            if (State.sortBy === 'price_low') results.sort((a,b) => a.price - b.price);
+            else if (State.sortBy === 'price_high') results.sort((a,b) => b.price - a.price);
+            else results.sort((a,b) => b.rating - a.rating);
+
+            return results;
+        },
+
+        setRange(range) {
+            State.range = range;
+            this.renderFilters();
+            Router.renderHome();
+        },
+
+        toggleConcern(concern) {
+            if (State.concerns.includes(concern)) {
+                State.concerns = State.concerns.filter(c => c !== concern);
+            } else {
+                State.concerns.push(concern);
+            }
+            this.renderFilters();
+            Router.renderHome();
+        },
+
+        resetFilters() {
+            State.range = 'All';
+            State.concerns = [];
+            State.maxPrice = 500000;
+            document.getElementById('price-range').value = 500000;
+            document.getElementById('price-val').textContent = 'ALL';
+            this.renderFilters();
+            Router.renderHome();
+        },
+
+        renderFilters() {
+            const rangeContainer = document.getElementById('range-filters');
+            const ranges = ['All', ...new Set(DB.products.map(p => p.range))];
+            rangeContainer.innerHTML = ranges.map(r => `
+                <button onclick="Engine.setRange('${r}')" 
+                    class="w-full text-left px-4 py-2.5 rounded-lg text-xs transition-all flex items-center justify-between group border
+                    ${State.range === r 
+                        ? 'bg-white dark:bg-white text-black dark:text-black border-loreal-500 shadow-sm font-medium' 
+                        : 'bg-transparent text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-white/5 hover:text-black dark:hover:text-white border-transparent'
+                    }">
+                    ${r}
+                    ${State.range === r ? '<div class="w-1 h-1 rounded-full bg-loreal-500"></div>' : ''}
+                </button>
+            `).join('');
+
+            const concernContainer = document.getElementById('concern-filters');
+            const concerns = ['Anti-Aging', 'Brightening', 'Acne', 'Hydrating', 'Oil Control', 'Sensitive Skin'];
+            concernContainer.innerHTML = concerns.map(c => `
+                <button onclick="Engine.toggleConcern('${c}')" 
+                    class="w-full text-left px-4 py-2 rounded-lg text-xs transition-all flex items-center gap-2.5 group border
+                    ${State.concerns.includes(c) 
+                        ? 'bg-white dark:bg-white text-black dark:text-black border-loreal-500 shadow-sm font-medium' 
+                        : 'bg-transparent text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-white/5 hover:text-black dark:hover:text-white border-transparent'
+                    }">
+                    <div class="w-3.5 h-3.5 rounded border border-gray-300 dark:border-gray-700 flex items-center justify-center ${State.concerns.includes(c) ? 'bg-loreal-500 border-loreal-500' : 'group-hover:border-gray-900 dark:group-hover:border-white'}">
+                        ${State.concerns.includes(c) ? '<i data-lucide="check" class="w-2.5 h-2.5 text-white"></i>' : ''}
+                    </div>
+                    ${c}
+                </button>
+            `).join('');
+        }
+    };
+
+    const Router = {
+        navigate(view, e) {
+            if (e) e.preventDefault(); // Prevent anchor jump to top
+            State.currentView = view;
+            
+            const rightSidebar = document.getElementById('right-sidebar');
+            if (rightSidebar) {
+                if (view === 'home') {
+                    rightSidebar.classList.remove('hidden');
+                    rightSidebar.classList.add('xl:flex');
+                } else {
+                    rightSidebar.classList.add('hidden');
+                    rightSidebar.classList.remove('xl:flex');
+                }
+            }
+
+            const titleEl = document.getElementById('main-page-title');
+            const descEl = document.getElementById('main-page-desc');
+            const searchContainer = document.getElementById('search-container');
+
+            if (view === 'home') {
+                titleEl.innerText = 'Product Catalog';
+                descEl.innerText = 'Explore the collection by active ingredients, product line, or benefits.';
+                searchContainer.classList.remove('hidden');
+                descEl.classList.remove('hidden');
+            } else if (view === 'analytics') {
+                titleEl.innerText = "L'Oréal News"; 
+                descEl.innerText = 'Latest updates, innovations, and corporate announcements.';
+                searchContainer.classList.add('hidden');
+                descEl.classList.remove('hidden');
+            } else if (view === 'admin') {
+                titleEl.innerText = 'Inventory Index';
+                descEl.classList.add('hidden');
+                searchContainer.classList.add('hidden');
+            }
+
+            document.querySelectorAll('.nav-item').forEach(el => {
+                el.classList.remove('bg-white', 'dark:bg-white', 'text-black', 'dark:text-black', 'border-loreal-500', 'shadow-sm');
+                el.classList.add('text-gray-500', 'dark:text-gray-400');
+                const icon = el.querySelector('i');
+                if(icon) icon.classList.remove('text-loreal-500');
+            });
+            const activeLink = document.getElementById(`nav-${view}`);
+            if(activeLink) {
+                activeLink.classList.add('bg-white', 'dark:bg-white', 'text-black', 'dark:text-black', 'border-loreal-500', 'shadow-sm');
+                activeLink.classList.remove('text-gray-500', 'dark:text-gray-400');
+                const icon = activeLink.querySelector('i');
+                if(icon) icon.classList.add('text-loreal-500');
+            }
+
+            const filterPanel = document.getElementById('filter-panel');
+            if(view === 'home') filterPanel.classList.remove('hidden');
+            else filterPanel.classList.add('hidden');
+
+            const viewport = document.getElementById('view-viewport');
+            if (view === 'home') this.renderHome();
+            else if (view === 'analytics') this.renderNews(); 
+            else if (view === 'admin') this.renderAdmin();
+
+            lucide.createIcons();
+        },
+
+        renderHome() {
+            const products = Engine.filterProducts();
+            const viewport = document.getElementById('view-viewport');
+            
+            const isSlide = State.viewMode === 'slide';
+            const containerClass = isSlide ? 'product-slider mode-slide' : 'data-grid';
+            
+            let html = `
+                <div class="flex flex-col md:flex-row justify-between items-center mb-10 gap-4">
+                    <div class="text-xs font-bold text-gray-400 dark:text-gray-600 uppercase tracking-widest font-medium">${products.length} RESULTS</div>
+                    <div class="flex items-center gap-4 w-full md:w-auto">
+                        <div class="flex items-center gap-3 flex-1 md:flex-none">
+                            <label class="text-[10px] font-bold text-gray-500 dark:text-gray-600 uppercase tracking-widest">SORT BY:</label>
+                            <select onchange="State.sortBy = this.value; Router.renderHome()" class="bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-full px-4 py-2 text-xs text-black dark:text-white focus:outline-none focus:border-loreal-500 w-full md:w-auto appearance-none pr-8">
+                                <option value="relevance" ${State.sortBy === 'relevance' ? 'selected' : ''}>Top Rated</option>
+                                <option value="price_low" ${State.sortBy === 'price_low' ? 'selected' : ''}>Price: Low to High</option>
+                                <option value="price_high" ${State.sortBy === 'price_high' ? 'selected' : ''}>Price: High to Low</option>
+                            </select>
+                        </div>
+                        
+                        <div class="flex bg-gray-100 dark:bg-white/5 rounded-full p-1 border border-gray-200 dark:border-white/10">
+                            <button onclick="State.viewMode = 'grid'; Router.renderHome()" class="p-2 rounded-full transition-all ${!isSlide ? 'bg-white dark:bg-black shadow-sm text-black dark:text-white' : 'text-gray-500 dark:text-gray-400 hover:text-black dark:hover:text-white'}">
+                                <i data-lucide="layout-grid" class="w-4 h-4"></i>
+                            </button>
+                            <button onclick="State.viewMode = 'slide'; Router.renderHome()" class="p-2 rounded-full transition-all ${isSlide ? 'bg-white dark:bg-black shadow-sm text-black dark:text-white' : 'text-gray-500 dark:text-gray-400 hover:text-black dark:hover:text-white'}">
+                                <i data-lucide="chevrons-left-right" class="w-4 h-4"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            if (products.length === 0) {
+                html += `
+                    <div class="flex flex-col items-center justify-center py-32 text-center">
+                        <i data-lucide="search-x" class="w-16 h-16 text-gray-200 dark:text-gray-800 mb-6"></i>
+                        <h3 class="text-xl font-serif text-black dark:text-white">No products found</h3>
+                        <p class="text-sm text-gray-500 dark:text-gray-500 mt-2">Try adjusting your filters.</p>
+                    </div>
+                `;
+            } else {
+                html += `<div class="${containerClass}">`;
+                html += products.map((p, index) => Components.ProductCard(p, index)).join('');
+                html += `</div>`;
+            }
+
+            viewport.innerHTML = html;
+            UI.initScrollObserver();
+        },
+
+        renderNews() {
+            const viewport = document.getElementById('view-viewport');
+            const news = DB.news;
+            const isSlide = State.newsViewMode === 'slide';
+            
+            const containerClass = isSlide ? 'product-slider mode-slide' : 'grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8';
+
+            let html = `
+                <div class="flex justify-between items-center mb-8 gap-4">
+                    <div class="text-xs font-bold text-gray-400 dark:text-gray-600 uppercase tracking-widest font-medium">${news.length} ARTICLES</div>
+                    
+                    <!-- View Mode Toggle for News -->
+                    <div class="flex bg-gray-100 dark:bg-white/5 rounded-full p-1 border border-gray-200 dark:border-white/10">
+                        <button onclick="State.newsViewMode = 'grid'; Router.renderNews()" class="p-2 rounded-full transition-all ${!isSlide ? 'bg-white dark:bg-black shadow-sm text-black dark:text-white' : 'text-gray-500 dark:text-gray-400 hover:text-black dark:hover:text-white'}">
+                            <i data-lucide="layout-grid" class="w-4 h-4"></i>
+                        </button>
+                        <button onclick="State.newsViewMode = 'slide'; Router.renderNews()" class="p-2 rounded-full transition-all ${isSlide ? 'bg-white dark:bg-black shadow-sm text-black dark:text-white' : 'text-gray-500 dark:text-gray-400 hover:text-black dark:hover:text-white'}">
+                            <i data-lucide="chevrons-left-right" class="w-4 h-4"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="animate-fade-in max-w-full ${containerClass}">
+                    ${news.map(item => `
+                        <div class="card-wrapper content-card p-0 rounded-3xl overflow-hidden border border-gray-100 dark:border-white/5 shadow-luxury group flex flex-col h-full">
+                            <div class="relative h-[300px] overflow-hidden shrink-0">
+                                <img src="${item.image}" loading="lazy" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-1000 ease-in-out">
+                                <div class="absolute inset-0 bg-gradient-to-t from-white dark:from-black via-white/90 dark:via-black/90 to-transparent"></div>
+                                <div class="absolute top-6 left-6">
+                                    <span class="text-[10px] font-bold bg-loreal-500 text-white px-3 py-1.5 rounded-full uppercase tracking-wider shadow-md">${item.category}</span>
+                                </div>
+                            </div>
+                            <div class="p-8 flex-1 flex flex-col">
+                                <div class="text-xs text-loreal-600 dark:text-loreal-500 font-bold uppercase tracking-widest mb-3">${item.date}</div>
+                                <h3 class="text-xl md:text-2xl font-serif font-medium text-black dark:text-white mb-4 leading-tight group-hover:text-loreal-600 dark:group-hover:text-loreal-500 transition-colors line-clamp-2">
+                                    ${item.title}
+                                </h3>
+                                <p class="text-gray-600 dark:text-gray-400 text-sm leading-relaxed mb-6 font-light line-clamp-3">
+                                    ${item.summary}
+                                </p>
+                                <button onclick="NewsModal.open('${item.id}')" class="text-xs font-bold text-black dark:text-white uppercase tracking-widest hover:text-loreal-600 dark:hover:text-loreal-500 flex items-center gap-2 transition-colors group/btn w-max">
+                                    Read Full Story <i data-lucide="arrow-right" class="w-4 h-4 transition-transform group-hover/btn:translate-x-1"></i>
+                                </button>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+            
+            viewport.innerHTML = html;
+            UI.initScrollObserver();
+        },
+
+        renderAdmin() {
+            const viewport = document.getElementById('view-viewport');
+            viewport.innerHTML = `
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4 max-w-full">
+                    <h2 class="text-3xl font-serif text-black dark:text-white">Inventory Index</h2>
+                    <button onclick="AdminActions.addMock()" class="bg-black dark:bg-white text-white dark:text-black px-6 py-3 rounded-full text-xs font-bold uppercase tracking-widest transition hover:opacity-90 shadow-lg w-full md:w-auto justify-center flex items-center gap-2">
+                        <i data-lucide="plus" class="w-4 h-4"></i> Add Product
+                    </button>
+                </div>
+
+                <div class="content-card rounded-3xl overflow-hidden border border-gray-100 dark:border-white/5 shadow-luxury w-full">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left min-w-[900px]">
+                            <thead class="bg-gray-50 dark:bg-white/5 text-gray-500 dark:text-gray-400 text-[10px] uppercase tracking-widest font-bold">
+                                <tr>
+                                    <th class="p-5">SKU</th>
+                                    <th class="p-5">Product Line</th>
+                                    <th class="p-5">Volume</th>
+                                    <th class="p-5">Concerns</th>
+                                    <th class="p-5">Price</th>
+                                    <th class="p-5">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-gray-100 dark:divide-white/5 text-sm text-gray-700 dark:text-gray-300">
+                                ${DB.products.slice(0, 50).map(p => `
+                                    <tr class="hover:bg-gray-50 dark:hover:bg-white/5 transition group">
+                                        <td class="p-5 font-mono text-xs text-gray-500 dark:text-gray-500">${p.id}</td>
+                                        <td class="p-5 font-medium">
+                                            <div class="text-black dark:text-white group-hover:text-loreal-600 dark:group-hover:text-loreal-500 transition-colors">${p.name}</div>
+                                            <div class="text-xs text-gray-400 dark:text-gray-600">${p.range}</div>
+                                        </td>
+                                        <td class="p-5 font-mono text-gray-500 dark:text-gray-500">${p.volume}</td>
+                                        <td class="p-5">
+                                            <div class="flex flex-wrap gap-1">
+                                                ${p.concerns.slice(0,1).map(c => `<span class="tag">${c}</span>`).join('')}
+                                            </div>
+                                        </td>
+                                        <td class="p-5 font-mono text-black dark:text-white">${Utils.formatRupiah(p.price)}</td>
+                                        <td class="p-5">
+                                            <span class="text-[10px] font-bold px-2.5 py-1 rounded ${p.stockStatus === 'In Stock' ? 'badge-success' : p.stockStatus === 'Low Stock' ? 'badge-warning' : 'badge-error'}">
+                                                ${p.stockStatus}
+                                            </span>
+                                        </td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            `;
+        }
+    };
+
+    const Components = {
+        ProductCard: (p, index) => `
+            <div class="card-wrapper product-card rounded-3xl p-6 flex flex-col h-full border border-gray-100 dark:border-white/5 bg-white dark:bg-[#0a0a0a] hover:shadow-glow transition-all duration-500">
+                <div class="relative aspect-[4/3] overflow-hidden rounded-2xl bg-gray-50 dark:bg-white/5 mb-6 group">
+                    <img src="${p.image}" class="w-full h-full object-cover opacity-95 group-hover:opacity-100 group-hover:scale-105 transition-transform duration-700 ease-out">
+                    <div class="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-all duration-300 translate-y-2 group-hover:translate-y-0 z-10">
+                        <button onclick="Modal.open('${p.id}')" class="p-2.5 bg-white dark:bg-black/80 backdrop-blur text-black dark:text-white rounded-xl shadow-lg hover:bg-loreal-500 hover:text-white transition-colors border border-gray-100 dark:border-white/10">
+                            <i data-lucide="eye" class="w-4 h-4"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="mb-4">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-[10px] font-bold text-black dark:text-white uppercase tracking-widest">${p.range}</span>
+                        <span class="text-xs text-gray-400 dark:text-gray-600 font-mono">${p.volume}</span>
+                    </div>
+                    <h3 class="text-sm font-bold text-black dark:text-gray-200 leading-snug line-clamp-2 h-10 hover:text-loreal-600 dark:hover:text-loreal-500 transition-colors">${p.name}</h3>
+                </div>
+
+                <div class="space-y-3 mb-6 flex-1">
+                    <div class="flex items-center gap-1 text-xs text-loreal-500">
+                        <i data-lucide="star" class="w-3 h-3 fill-loreal-500"></i> <span class="font-bold">${p.rating}</span>
+                    </div>
+                    <div class="flex flex-wrap gap-1.5">
+                        ${p.concerns.slice(0,2).map(c => `<span class="tag">${c}</span>`).join('')}
+                    </div>
+                </div>
+
+                <div class="pt-4 border-t border-gray-100 dark:border-white/5 flex justify-between items-center">
+                    <span class="font-bold text-black dark:text-white font-mono text-sm tracking-tight">${Utils.formatRupiah(p.price)}</span>
+                    <span class="text-[10px] uppercase font-bold tracking-wide ${p.stockStatus === 'In Stock' ? 'text-emerald-600 dark:text-emerald-500' : 'text-gray-400 dark:text-gray-600'}">${p.stockStatus}</span>
+                </div>
+            </div>
+        `,
+        
+        ModalContent: (p) => `
+            <div class="grid grid grid-cols-1 md:grid-cols-2 gap-12">
+                <div class="w-full">
+                    <div class="relative aspect-square rounded-3xl overflow-hidden bg-gray-50 dark:bg-white/5 mb-8">
+                        <img src="${p.image}" class="w-full h-full object-cover">
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <button class="py-3 bg-gray-50 dark:bg-white/5 hover:bg-loreal-50 dark:hover:bg-loreal-500/10 border border-gray-100 dark:border-white/10 rounded-xl text-sm font-medium transition text-black dark:text-white">Technical Sheet</button>
+                        <button class="py-3 bg-gray-50 dark:bg-white/5 hover:bg-loreal-50 dark:hover:bg-loreal-500/10 border border-gray-100 dark:border-white/10 rounded-xl text-sm font-medium transition text-black dark:text-white">Marketing Assets</button>
+                    </div>
+                </div>
+                <div>
+                    <div class="flex flex-wrap items-center gap-3 mb-4">
+                        <span class="px-3 py-1.5 bg-loreal-500 text-white rounded-full text-[10px] font-bold uppercase tracking-widest">${p.category}</span>
+                        <span class="text-xs text-gray-500 dark:text-gray-500 font-mono border border-gray-200 dark:border-white/10 px-2 py-1 rounded">${p.id}</span>
+                        <span class="text-xs text-gray-500 dark:text-gray-500 font-mono border border-gray-200 dark:border-white/10 px-2 py-1 rounded">${p.range}</span>
+                    </div>
+                    <h2 class="text-3xl md:text-4xl font-serif font-medium text-black dark:text-white mb-6">${p.name}</h2>
+                    <div class="text-2xl md:text-3xl font-mono text-black dark:text-white mb-8 tracking-tight">${Utils.formatRupiah(p.price)}</div>
+                    
+                    <div class="space-y-6">
+                        <div>
+                                <h4 class="text-[10px] font-bold text-gray-400 dark:text-gray-600 uppercase tracking-widest mb-3">Target Concerns</h4>
+                                <div class="flex flex-wrap gap-2">
+                                    ${p.concerns.map(c => `<span class="bg-gray-50 dark:bg-white/5 text-black dark:text-white px-4 py-2 rounded-xl text-xs border border-gray-100 dark:border-white/10 font-medium">${c}</span>`).join('')}
+                                </div>
+                        </div>
+                        
+                        <div>
+                            <h4 class="text-[10px] font-bold text-gray-400 dark:text-gray-600 uppercase tracking-widest mb-3">Active Ingredients</h4>
+                            <p class="text-sm text-gray-700 dark:text-gray-300 leading-relaxed bg-gray-50 dark:bg-white/5 p-6 rounded-2xl border border-gray-100 dark:border-white/10 font-mono">
+                                ${p.ingredients}
+                            </p>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-4 mt-8">
+                            <div class="bg-gray-50 dark:bg-white/5 p-4 rounded-2xl border border-gray-100 dark:border-white/10">
+                                <div class="text-[10px] text-gray-500 dark:text-gray-500 uppercase tracking-widest mb-1">Volume</div>
+                                <div class="text-lg font-bold text-black dark:text-white">${p.volume}</div>
+                            </div>
+                            <div class="bg-gray-50 dark:bg-white/5 p-4 rounded-2xl border border-gray-100 dark:border-white/10">
+                                <div class="text-[10px] text-gray-500 dark:text-gray-500 uppercase tracking-widest mb-1">Stock Status</div>
+                                <div class="text-lg font-bold ${p.stockStatus === 'In Stock' ? 'text-emerald-600 dark:text-emerald-500' : 'text-gray-400 dark:text-gray-600'}">${p.stockStatus}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `,
+        
+        NewsModalContent: (n) => `
+            <article class="max-w-4xl mx-auto pb-12">
+                <div class="flex items-center gap-3 mb-6">
+                    <span class="px-3 py-1.5 bg-black dark:bg-white text-white dark:text-black rounded-full text-[10px] font-bold uppercase tracking-widest">${n.category}</span>
+                    <span class="text-xs text-gray-500 dark:text-gray-400 font-mono uppercase tracking-widest">${n.date}</span>
+                </div>
+                
+                <h1 class="text-3xl md:text-5xl font-serif font-bold text-black dark:text-white mb-8 leading-tight">
+                    ${n.title}
+                </h1>
+
+                <div class="w-full h-[400px] md:h-[500px] rounded-3xl overflow-hidden mb-10 shadow-xl">
+                    <img src="${n.image}" class="w-full h-full object-cover">
+                </div>
+
+                <div class="prose prose-lg dark:prose-invert max-w-none text-gray-700 dark:text-gray-300 font-light leading-relaxed">
+                    <p class="text-xl md:text-2xl text-loreal-600 dark:text-loreal-400 mb-8 font-serif italic">
+                        ${n.summary}
+                    </p>
+                    <p>${n.content}</p>
+                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus lacinia odio vitae vestibulum vestibulum. Cras venenatis euismod malesuada. Nullam ac odio ten. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+                    <p>Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Nullam quis risus eget urna mollis ornare vel eu leo. Curabitur aliquet quam id dui posuere blandit.</p>
+                </div>
+            </article>
+        `
+    };
+
+    const AdminActions = {
+        addMock() {
+            const name = prompt("Enter New Product Name:");
+            if(name) {
+                const newProd = {
+                    id: `SKU-${1000+DB.products.length+1}`,
+                    name: name,
+                    range: 'New Launch',
+                    category: 'Skincare',
+                    concerns: ['New Formula'],
+                    price: 199000,
+                    volume: '50ml',
+                    ingredients: 'Proprietary Blend',
+                    rating: '5.0',
+                    stockStatus: 'In Stock',
+                    image: `https://picsum.photos/seed/${Date.now()}/400/400`
+                };
+                DB.products.unshift(newProd);
+                Router.renderAdmin();
+            }
+        }
+    };
+
+    const NewsModal = {
+        open(id) {
+            const newsItem = DB.news.find(x => x.id === id);
+            if(!newsItem) return;
+            const modal = document.getElementById('detail-modal');
+            document.getElementById('modal-content').innerHTML = Components.NewsModalContent(newsItem);
+            modal.classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+            lucide.createIcons();
+        },
+        close() {
+            document.getElementById('detail-modal').classList.add('hidden');
+            document.body.style.overflow = '';
+        }
+    };
+
+    const Modal = {
+        open(id) {
+            const p = DB.products.find(x => x.id === id);
+            if(!p) return;
+            const modal = document.getElementById('detail-modal');
+            document.getElementById('modal-content').innerHTML = Components.ModalContent(p);
+            modal.classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+            lucide.createIcons();
+        },
+        close() {
+            document.getElementById('detail-modal').classList.add('hidden');
+            document.body.style.overflow = '';
+        }
+    };
+
+    const UI = {
+        initScrollObserver() {
+            const observerOptions = {
+                root: null,
+                rootMargin: '0px',
+                threshold: 0.1
+            };
+
+            const observer = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('is-visible');
+                        observer.unobserve(entry.target); 
+                    }
+                });
+            }, observerOptions);
+
+            const wrappers = document.querySelectorAll('.card-wrapper');
+            wrappers.forEach(wrapper => observer.observe(wrapper));
+        },
+
+        toggleMobileSidebar() {
+            if (window.innerWidth >= 768) return;
+
+            const sidebar = document.getElementById('desktop-sidebar');
+            const backdrop = document.getElementById('sidebar-backdrop');
+            const isHidden = sidebar.classList.contains('-translate-x-full');
+
+            if (isHidden) {
+                sidebar.classList.remove('hidden', '-translate-x-full');
+                sidebar.classList.add('absolute', 'md:relative', 'z-40', 'w-80', 'h-full');
+                backdrop.classList.remove('hidden');
+                setTimeout(() => backdrop.classList.remove('opacity-0'), 10);
+            } else {
+                sidebar.classList.add('-translate-x-full');
+                backdrop.classList.add('opacity-0');
+                setTimeout(() => {
+                    sidebar.classList.add('hidden');
+                    sidebar.classList.remove('absolute', 'z-40');
+                    backdrop.classList.add('hidden');
+                }, 300);
+            }
+        },
+        
+        toggleTheme() {
+            const html = document.documentElement;
+            const isDark = html.classList.toggle('dark');
+            const iconMobile = document.getElementById('theme-icon-mobile');
+            const iconDesktop = document.getElementById('theme-icon-desktop');
+            const iconName = isDark ? 'moon' : 'sun';
+
+            if(iconMobile) {
+                iconMobile.setAttribute('data-lucide', iconName);
+            }
+            if(iconDesktop) {
+                iconDesktop.setAttribute('data-lucide', iconName);
+            }
+            
+            lucide.createIcons();
+
+            try {
+                localStorage.setItem('theme', isDark ? 'dark' : 'light');
+            } catch (e) {}
+        }
+    };
+
+    const Utils = {
+        formatRupiah: (n) => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(n),
+        debounce: (func, wait) => {
+            let timeout;
+            return function executedFunction(...args) {
+                const later = () => { clearTimeout(timeout); func(...args); };
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+            };
+        }
+    };
+
+    window.addEventListener('DOMContentLoaded', () => {
+        const loader = document.getElementById('loader-overlay');
+        const hasLoadedSession = sessionStorage.getItem('loreal_loaded');
+        
+        if (!hasLoadedSession) {
+            loader.style.display = 'flex';
+            Engine.init();
+            Router.renderHome();
+            
+            try {
+                const savedTheme = localStorage.getItem('theme');
+                const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                const shouldBeDark = savedTheme ? savedTheme === 'dark' : true; 
+                
+                if (shouldBeDark) {
+                    document.documentElement.classList.add('dark');
+                    document.querySelectorAll('[id^="theme-icon"]').forEach(el => el.setAttribute('data-lucide', 'moon'));
+                } else {
+                    document.documentElement.classList.remove('dark');
+                    document.querySelectorAll('[id^="theme-icon"]').forEach(el => el.setAttribute('data-lucide', 'sun'));
+                }
+            } catch (e) {
+                document.documentElement.classList.add('dark');
+            }
+
+            setTimeout(() => {
+                loader.classList.add('loader-hidden');
+                sessionStorage.setItem('loreal_loaded', 'true');
+            }, 2000);
+
+        } else {
+            loader.style.display = 'none';
+            
+            try {
+                const savedTheme = localStorage.getItem('theme');
+                const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                const shouldBeDark = savedTheme ? savedTheme === 'dark' : true; 
+                
+                if (shouldBeDark) {
+                    document.documentElement.classList.add('dark');
+                    document.querySelectorAll('[id^="theme-icon"]').forEach(el => el.setAttribute('data-lucide', 'moon'));
+                } else {
+                    document.documentElement.classList.remove('dark');
+                    document.querySelectorAll('[id^="theme-icon"]').forEach(el => el.setAttribute('data-lucide', 'sun'));
+                }
+            } catch (e) {
+                document.documentElement.classList.add('dark');
+            }
+            
+            Engine.init();
+            Router.renderHome();
+        }
+        
+        const handleResize = () => {
+            const sidebar = document.getElementById('desktop-sidebar');
+            const backdrop = document.getElementById('sidebar-backdrop');
+            
+            // Force Desktop State
+            if (window.innerWidth >= 768) {
+                sidebar.classList.remove('hidden', 'absolute', '-translate-x-full', 'z-40');
+                sidebar.classList.add('flex');
+                backdrop.classList.add('hidden');
+            } 
+            // Force Mobile State
+            else {
+                sidebar.classList.remove('flex');
+                sidebar.classList.add('hidden', 'absolute', '-translate-x-full', 'z-40');
+                backdrop.classList.add('hidden');
+            }
+        };
+
+        window.addEventListener('resize', Utils.debounce(handleResize, 100));
+        
+        // Initial check to fix layout on load
+        handleResize();
+        
+        lucide.createIcons();
+        
+        document.addEventListener('keydown', (e) => {
+            if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+                e.preventDefault();
+                document.getElementById('main-search').focus();
+            }
+        });
+    });
+    </script>
+</body>
+</html>
