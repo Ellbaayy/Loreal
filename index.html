@@ -2,7 +2,6 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <!-- Viewport yang aman untuk mencegah layout break pada double-tap zoom di mobile -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>L'Oréal Product Intelligence Engine | Corporate</title>
     <script src="https://cdn.tailwindcss.com"></script>
@@ -51,72 +50,61 @@
     </script>
 
     <style>
-        /* Base Reset & Smooth Scrolling */
         html { scroll-behavior: smooth; }
         body { background-color: #ffffff; color: #111111; overflow-x: hidden; -webkit-font-smoothing: antialiased; transition: background-color 0.3s ease, color 0.3s ease; }
         
-        /* Dark Mode Overrides */
         .dark body { background-color: #000000; color: #f3f4f6; }
 
-        /* Sidebar & Panel Styles */
         .solid-panel { background: #ffffff; border-right: 1px solid #e5e5e5; transition: background-color 0.3s ease, border-color 0.3s ease; }
         .dark .solid-panel { background: #000000; border-right: 1px solid #1a1a1a; }
 
-        /* Content Cards */
         .content-card { background: #ffffff; border: 1px solid #e5e5e5; transition: all 0.3s ease; }
         .dark .content-card { background: #0a0a0a; border: 1px solid #1a1a1a; }
         .dark .content-card:hover { border-color: #C5A059; box-shadow: 0 4px 24px -5px rgba(197, 160, 89, 0.1); }
 
-        /* Main Background */
         .main-bg { background-color: #f9fafb; transition: background-color 0.3s ease; }
         .dark .main-bg { background-color: #000000; }
 
-        /* Custom Scrollbar */
         ::-webkit-scrollbar { width: 6px; height: 6px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 3px; }
         .dark ::-webkit-scrollbar-thumb { background: #333333; }
         .dark ::-webkit-scrollbar-thumb:hover { background: #C5A059; }
 
-        /* Search Input */
         .search-input { background: #ffffff; border: 1px solid #e5e5e5; color: #000000; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
         .dark .search-input { background: #0a0a0a; border: 1px solid #333333; color: #ffffff; }
         .search-input:focus { outline: none; border-color: #000000; background: #ffffff; }
         .dark .search-input:focus { border-color: #C5A059; background: #0a0a0a; box-shadow: 0 0 0 1px #C5A05920; }
 
-        /* Grid Layout (Desktop Default) */
         .data-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 2rem; }
 
-        /* Horizontal Slider (Mobile/Slide Mode) */
         .product-slider {
             display: flex;
             overflow-x: auto;
             scroll-snap-type: x mandatory;
             gap: 1.5rem;
-            padding-bottom: 2rem; /* Space for shadow/scrollbar */
-            padding-right: 1rem; /* Ensure last item isn't cut off */
-            scrollbar-width: none; /* Firefox */
-            -ms-overflow-style: none; /* IE/Edge */
+            padding-bottom: 2rem;
+            padding-right: 1rem;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
         }
         .product-slider::-webkit-scrollbar { display: none; }
         
         .product-card { transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94), box-shadow 0.4s ease; position: relative; overflow: hidden; }
         .product-card:hover { transform: translateY(-6px); }
         
-        /* Animation Wrapper - Shared by Products & News */
         .card-wrapper { 
             opacity: 0; 
             transform: translateY(30px); 
             transition: opacity 0.8s ease-out, transform 0.8s ease-out; 
             flex-shrink: 0;
             scroll-snap-align: start; 
-            height: auto; /* Auto height for content adaptation */
-            display: flex; /* Flex for alignment */
+            height: auto; 
+            display: flex; 
             flex-direction: column;
         }
         .card-wrapper.is-visible { opacity: 1; transform: translateY(0); }
 
-        /* Mode Slide Dimensions */
         .mode-slide .card-wrapper {
             width: 85vw;  
             max-width: 400px;
@@ -134,7 +122,6 @@
             }
         }
 
-        /* Badges */
         .badge-success { background: rgba(16, 185, 129, 0.1); color: #059669; border: 1px solid rgba(16, 185, 129, 0.2); font-weight: 600; letter-spacing: 0.02em;}
         .dark .badge-success { background: rgba(16, 185, 129, 0.05); color: #34d399; border-color: rgba(16, 185, 129, 0.1); }
         .badge-warning { background: rgba(245, 158, 11, 0.1); color: #d97706; border: 1px solid rgba(245, 158, 11, 0.2); font-weight: 600; letter-spacing: 0.02em;}
@@ -145,11 +132,9 @@
         .tag { font-size: 0.65rem; padding: 0.25rem 0.75rem; border-radius: 9999px; border: 1px solid #e5e5e5; background: #ffffff; color: #6b7280; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 500; }
         .dark .tag { background: #111111; color: #9ca3af; border-color: #333333; }
 
-        /* Mobile Sidebar Transition */
         #mobile-sidebar { transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1); box-shadow: 10px 0 40px rgba(0,0,0,0.5); z-index: 50; }
         #mobile-sidebar.hidden-sidebar { transform: translateX(-105%); }
 
-        /* Loading Screen */
         #loader-overlay {
             background-color: #000000;
             transition: opacity 0.8s ease-out, transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
@@ -172,7 +157,6 @@
 </head>
 <body class="h-screen flex flex-col md:flex-row overflow-hidden antialiased text-brand-900 dark:text-gray-100 selection:bg-loreal-500 selection:text-white">
     
-    <!-- LOADING OVERLAY -->
     <div id="loader-overlay" class="fixed inset-0 z-[9999] flex flex-col items-center justify-center">
         <div class="text-center transform transition-transform duration-700">
             <div class="relative inline-block mb-8 group">
@@ -189,10 +173,8 @@
         </div>
     </div>
 
-    <!-- SIDEBAR BACKDROP (Mobile) -->
     <div id="sidebar-backdrop" onclick="UI.toggleMobileSidebar()" class="fixed inset-0 bg-black/80 z-30 hidden md:hidden transition-opacity opacity-0 backdrop-blur-sm"></div>
 
-    <!-- SIDEBAR -->
     <aside id="desktop-sidebar" class="w-80 solid-panel hidden md:flex flex-col shrink-0 z-40 h-full absolute md:relative transition-transform duration-300">
         <div class="p-8 border-b border-gray-200 dark:border-gray-800 flex justify-between items-center md:justify-start md:gap-4">
             <div class="flex items-center gap-3">
@@ -256,17 +238,13 @@
         </div>
     </aside>
 
-    <!-- MAIN CONTENT AREA -->
     <main class="flex-1 flex flex-col relative overflow-hidden main-bg h-full">
-        <!-- Background Glows -->
         <div class="absolute inset-0 pointer-events-none -z-10 overflow-hidden">
             <div class="absolute top-[-10%] right-[-5%] w-[600px] h-[600px] bg-loreal-500/5 rounded-full blur-3xl opacity-30"></div>
             <div class="absolute bottom-[-10%] left-[-5%] w-[400px] h-[400px] bg-gray-200/50 dark:bg-white/5 rounded-full blur-3xl opacity-30"></div>
         </div>
 
-        <!-- Header -->
         <header class="relative z-10 pt-10 pb-6 px-6 md:px-12 max-w-7xl mx-auto w-full shrink-0">
-            <!-- Mobile Header (Hamburger + Logo) -->
             <div class="flex justify-between items-center mb-10 md:hidden">
                 <div class="flex items-center gap-2">
                     <div class="w-6 h-6 bg-black dark:bg-white rounded-full flex items-center justify-center">
@@ -284,7 +262,6 @@
                 </div>
             </div>
 
-            <!-- Page Title & Description -->
             <div class="text-center md:text-left mb-10">
                 <h1 id="main-page-title" class="text-4xl md:text-6xl font-serif font-medium text-black dark:text-white mb-4 tracking-tight">Product Catalog</h1>
                 <p id="main-page-desc" class="text-gray-500 dark:text-gray-400 text-lg md:text-xl max-w-2xl mx-auto md:mx-0 font-light">
@@ -292,7 +269,6 @@
                 </p>
             </div>
 
-            <!-- Search Bar (Desktop Only) -->
             <div id="search-container" class="relative max-w-3xl mx-auto group">
                 <div class="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none text-gray-400 group-focus-within:text-loreal-500 transition-colors duration-300">
                     <i data-lucide="search" class="w-5 h-5"></i>
@@ -314,18 +290,15 @@
                 </div>
             </div>
 
-            <!-- Theme Toggle (Desktop) -->
             <button onclick="UI.toggleTheme()" class="hidden md:flex absolute top-2 right-0 p-3 rounded-full bg-white dark:bg-white/10 border border-gray-200 dark:border-white/10 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-white/20 hover:border-black dark:hover:border-white transition-all shadow-sm z-20 items-center justify-center gap-2 group" title="Toggle Theme">
                 <i id="theme-icon-desktop" data-lucide="moon" class="w-5 h-5"></i>
                 <span class="text-xs font-bold opacity-0 group-hover:opacity-100 transition-opacity absolute top-full mt-1 whitespace-nowrap bg-black dark:bg-white text-white dark:text-black px-2 py-1 rounded text-[10px]">Theme</span>
             </button>
         </header>
 
-        <!-- Dynamic Viewport -->
         <div id="view-viewport" class="flex-1 overflow-y-auto px-6 md:px-12 pb-24 scroll-smooth relative z-10 w-full"></div>
     </main>
 
-    <!-- Right Sidebar (Desktop Only) -->
     <aside id="right-sidebar" class="w-80 content-card hidden xl:flex flex-col z-20 h-full shrink-0 border-l border-transparent dark:border-white/5 transition-all duration-300">
         <div class="p-6 border-b border-gray-100 dark:border-white/5">
             <h3 class="font-serif italic text-lg text-black dark:text-white flex items-center gap-2">
@@ -363,10 +336,8 @@
         </div>
     </aside>
 
-    <!-- GLOBAL MODAL -->
     <div id="detail-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4">
         <div class="absolute inset-0 bg-black/80 backdrop-blur-md transition-opacity" onclick="NewsModal.close() || Modal.close()"></div>
-        <!-- Fix: Ensure modal allows internal scrolling on mobile and has max-height on desktop -->
         <div class="relative bg-white dark:bg-[#0a0a0a] w-full h-full md:max-w-5xl md:max-h-[90vh] md:rounded-3xl shadow-2xl shadow-black/20 overflow-y-auto flex flex-col border border-gray-100 dark:border-white/10">
             <button onclick="NewsModal.close() || Modal.close()" class="absolute top-4 right-4 z-10 p-2 rounded-full bg-gray-100 dark:bg-white/10 hover:bg-gray-200 dark:hover:bg-white/20 text-gray-500 hover:text-black dark:hover:text-white transition-all md:top-8 md:right-8">
                 <i data-lucide="x" class="w-6 h-6"></i>
@@ -439,7 +410,7 @@
                 },
                 {
                     id: 'n3',
-                    title: "L'Oréal for the Future: 60% Plastic Reduction Goal",
+                    title: "L'Oréal for Future: 60% Plastic Reduction Goal",
                     category: "Corporate",
                     type: "corporate",
                     date: "Oct 20, 2023",
@@ -453,7 +424,7 @@
                     category: "Innovation",
                     type: "innovation",
                     date: "Oct 18, 2023",
-                    summary: "New research reveals the impact of blue light on skin aging.",
+                    summary: "New research reveals impact of blue light on skin aging.",
                     image: "https://images.unsplash.com/photo-1515377905703-c4788e51af15?w=800&q=80",
                     content: "Recent studies from L'Oréal's R&D centers highlight the long-term effects of High Energy Visible (HEV) light."
                 }
@@ -631,18 +602,24 @@
 
     const Router = {
         navigate(view, e) {
-            if (e) e.preventDefault(); // Prevent anchor jump to top
+            if (e) e.preventDefault(); 
             State.currentView = view;
             
             const rightSidebar = document.getElementById('right-sidebar');
             if (rightSidebar) {
+                // --- FIX MOBILE OVERLAY BUG ---
+                // Selalu tambahkan 'hidden' agar sidebar tidak muncul di mobile
+                rightSidebar.classList.add('hidden');
+
                 if (view === 'home') {
-                    rightSidebar.classList.remove('hidden');
+                    // Hanya tambahkan 'xl:flex' (visible di desktop)
+                    // Jangan hapus 'hidden' (tetap hidden di mobile)
                     rightSidebar.classList.add('xl:flex');
                 } else {
-                    rightSidebar.classList.add('hidden');
+                    // Hapus 'xl:flex' agar hidden di semua ukuran layar
                     rightSidebar.classList.remove('xl:flex');
                 }
+                // -----------------------------
             }
 
             const titleEl = document.getElementById('main-page-title');
@@ -752,7 +729,6 @@
                 <div class="flex justify-between items-center mb-8 gap-4">
                     <div class="text-xs font-bold text-gray-400 dark:text-gray-600 uppercase tracking-widest font-medium">${news.length} ARTICLES</div>
                     
-                    <!-- View Mode Toggle for News -->
                     <div class="flex bg-gray-100 dark:bg-white/5 rounded-full p-1 border border-gray-200 dark:border-white/10">
                         <button onclick="State.newsViewMode = 'grid'; Router.renderNews()" class="p-2 rounded-full transition-all ${!isSlide ? 'bg-white dark:bg-black shadow-sm text-black dark:text-white' : 'text-gray-500 dark:text-gray-400 hover:text-black dark:hover:text-white'}">
                             <i data-lucide="layout-grid" class="w-4 h-4"></i>
@@ -1150,14 +1126,11 @@
             const sidebar = document.getElementById('desktop-sidebar');
             const backdrop = document.getElementById('sidebar-backdrop');
             
-            // Force Desktop State
             if (window.innerWidth >= 768) {
-                sidebar.classList.remove('hidden', 'absolute', '-translate-x-full', 'z-40');
+                sidebar.classList.remove('absolute', '-translate-x-full', 'z-40');
                 sidebar.classList.add('flex');
                 backdrop.classList.add('hidden');
-            } 
-            // Force Mobile State
-            else {
+            } else {
                 sidebar.classList.remove('flex');
                 sidebar.classList.add('hidden', 'absolute', '-translate-x-full', 'z-40');
                 backdrop.classList.add('hidden');
@@ -1166,7 +1139,6 @@
 
         window.addEventListener('resize', Utils.debounce(handleResize, 100));
         
-        // Initial check to fix layout on load
         handleResize();
         
         lucide.createIcons();
