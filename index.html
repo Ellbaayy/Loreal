@@ -20,7 +20,6 @@
                         mono: ['JetBrains Mono', 'monospace'] 
                     },
                     colors: {
-                        // Premium Neutral Palette
                         neutral: {
                             50: '#fafafa', 100: '#f5f5f5', 200: '#e5e5e5', 300: '#d4d4d4', 400: '#a3a3a3', 
                             500: '#737373', 600: '#525252', 700: '#404040', 800: '#303030', 900: '#1a1a1a', 950: '#0f0f0f'
@@ -31,7 +30,6 @@
                         },
                     },
                     boxShadow: {
-                        // Modern soft shadows
                         'soft': '0 4px 20px -2px rgba(0, 0, 0, 0.03), 0 2px 8px -2px rgba(0, 0, 0, 0.01)',
                         'glow': '0 0 25px -5px rgba(197, 160, 89, 0.15)',
                         'glass': '0 8px 32px 0 rgba(31, 38, 135, 0.07)',
@@ -52,8 +50,7 @@
     </script>
 
     <style>
-        /* Modern Base Styles */
-        html { scroll-behavior: smooth; }
+        html { scroll-behavior: smooth; will-change: background-color; }
         
         body { 
             background-color: #ffffff; 
@@ -61,9 +58,9 @@
             overflow-x: hidden; 
             -webkit-font-smoothing: antialiased; 
             -moz-osx-font-smoothing: grayscale; 
-            transition: background-color 0.4s ease, color 0.4s ease; 
+            transition: background-color 0.15s ease, color 0.15s ease; 
+            will-change: background-color, color;
             
-            /* Modern Text Selection */
             ::selection {
                 background-color: #C5A059;
                 color: #ffffff;
@@ -79,25 +76,23 @@
             }
         }
 
-        /* Modern Panel & Glassmorphism */
         .solid-panel { 
-            background: rgba(255, 255, 255, 0.85); 
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
+            background: rgba(255, 255, 255, 0.95); 
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
             border-right: 1px solid rgba(0,0,0,0.05); 
-            transition: background-color 0.4s ease, border-color 0.4s ease; 
+            transition: background-color 0.2s ease, border-color 0.2s ease; 
         }
         .dark .solid-panel { 
-            background: rgba(10, 10, 10, 0.85); 
+            background: rgba(10, 10, 10, 0.95); 
             border-right: 1px solid rgba(255,255,255,0.08); 
         }
 
-        /* Modern Card Style */
         .content-card { 
             background: rgba(255, 255, 255, 0.9); 
-            backdrop-filter: blur(8px);
+            backdrop-filter: blur(4px);
             border: 1px solid rgba(0, 0, 0, 0.04); 
-            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); 
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); 
         }
         .dark .content-card { 
             background: rgba(20, 20, 20, 0.6); 
@@ -109,29 +104,26 @@
             transform: translateY(-4px);
         }
 
-        /* Refined Background */
         .main-bg { 
             background: linear-gradient(135deg, #ffffff 0%, #fafafa 100%);
-            transition: background 0.4s ease; 
+            transition: background 0.15s ease; 
         }
         .dark .main-bg { 
             background: #000000; 
         }
 
-        /* Modern Scrollbar (Minimalist) */
         ::-webkit-scrollbar { width: 6px; height: 6px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.1); border-radius: 10px; }
         .dark ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); }
         .dark ::-webkit-scrollbar-thumb:hover { background: #C5A059; }
 
-        /* Modern Search Input */
         .search-input { 
-            background: rgba(255, 255, 255, 0.8); 
+            background: rgba(255, 255, 255, 0.9); 
             border: 1px solid rgba(0, 0, 0, 0.06); 
             color: #000000; 
             box-shadow: 0 4px 12px rgba(0,0,0,0.03);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); 
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); 
         }
         .dark .search-input { 
             background: rgba(255, 255, 255, 0.03); 
@@ -177,7 +169,7 @@
             height: auto; 
             display: flex; 
             flex-direction: column;
-            border-radius: 1rem; /* Modern rounded corners */
+            border-radius: 1rem;
         }
         .card-wrapper.is-visible { opacity: 1; transform: translateY(0); }
 
@@ -198,7 +190,6 @@
             }
         }
 
-        /* Modern Badges */
         .badge-success { background: rgba(16, 185, 129, 0.1); color: #059669; border: 1px solid rgba(16, 185, 129, 0.2); font-weight: 600; letter-spacing: 0.02em;}
         .dark .badge-success { background: rgba(16, 185, 129, 0.15); color: #34d399; border-color: rgba(16, 185, 129, 0.3); }
         .badge-warning { background: rgba(245, 158, 11, 0.1); color: #d97706; border: 1px solid rgba(245, 158, 11, 0.2); font-weight: 600; letter-spacing: 0.02em;}
@@ -213,7 +204,6 @@
         #mobile-sidebar { transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1); box-shadow: 20px 0 50px rgba(0,0,0,0.3); z-index: 50; }
         #mobile-sidebar.hidden-sidebar { transform: translateX(-105%); }
 
-        /* Loader */
         #loader-overlay {
             background-color: #000000;
             transition: opacity 1s ease-out, transform 1s cubic-bezier(0.16, 1, 0.3, 1);
@@ -232,11 +222,49 @@
             -webkit-background-clip: text;
             background-clip: text;
         }
+
+        .pdf-container {
+            font-family: 'Inter', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: #fff;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+        }
+        .dark .pdf-container {
+            background: #111;
+            color: #eee;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+        }
+        .pdf-section-title {
+            font-family: 'Playfair Display', serif;
+            color: #C5A059;
+            border-bottom: 2px solid #eee;
+        }
+        .dark .pdf-section-title {
+            border-bottom: 2px solid #333;
+        }
+        .pdf-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+        .pdf-color-swatch {
+            height: 60px;
+            border-radius: 6px;
+            border: 1px solid rgba(0,0,0,0.1);
+        }
+        
+        .tech-sheet-list-item.active {
+            background: rgba(197, 160, 89, 0.1);
+            border-left: 3px solid #C5A059;
+        }
+        .dark .tech-sheet-list-item.active {
+            background: rgba(197, 160, 89, 0.2);
+        }
     </style>
 </head>
 <body class="h-screen flex flex-col md:flex-row overflow-hidden antialiased text-neutral-900 dark:text-gray-100 selection:bg-loreal-500 selection:text-white">
     
-    <!-- LOADER -->
     <div id="loader-overlay" class="fixed inset-0 z-[9999] flex flex-col items-center justify-center">
         <div class="text-center transform transition-transform duration-700">
             <div class="relative inline-block mb-8 group">
@@ -253,10 +281,8 @@
         </div>
     </div>
 
-    <!-- BACKDROP -->
     <div id="sidebar-backdrop" onclick="UI.toggleMobileSidebar()" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-30 hidden md:hidden transition-opacity opacity-0"></div>
 
-    <!-- SIDEBAR -->
     <aside id="desktop-sidebar" class="w-80 solid-panel hidden md:flex flex-col shrink-0 z-40 h-full absolute md:relative transition-transform duration-300">
         <div class="p-8 border-b border-neutral-200/50 dark:border-white/5 flex justify-between items-center md:justify-start md:gap-4">
             <div class="flex items-center gap-3">
@@ -282,7 +308,7 @@
                     <i data-lucide="newspaper" class="w-4 h-4"></i> L'Oréal News
                 </a>
                 <a href="#" onclick="Router.navigate('admin'); UI.toggleMobileSidebar();" class="nav-item flex items-center gap-4 px-4 py-3 rounded-xl text-sm font-medium text-neutral-500 dark:text-neutral-400 hover:bg-neutral-50 dark:hover:bg-white/5 hover:text-neutral-900 dark:hover:text-white transition-all" id="nav-admin">
-                    <i data-lucide="database" class="w-4 h-4"></i> Inventory Index
+                    <i data-lucide="brain" class="w-4 h-4"></i> Product Intelligence
                 </a>
             </nav>
 
@@ -320,7 +346,6 @@
         </div>
     </aside>
 
-    <!-- MAIN CONTENT -->
     <main class="flex-1 flex flex-col relative overflow-hidden main-bg h-full">
         <div class="absolute inset-0 pointer-events-none -z-10 overflow-hidden">
             <div class="absolute top-[-15%] right-[-10%] w-[800px] h-[800px] bg-loreal-500/10 rounded-full blur-[100px] opacity-40"></div>
@@ -328,7 +353,6 @@
         </div>
 
         <header class="relative z-10 pt-10 pb-6 px-6 md:px-12 max-w-7xl mx-auto w-full shrink-0">
-            <!-- Mobile Header -->
             <div class="flex justify-between items-center mb-10 md:hidden">
                 <div class="flex items-center gap-2">
                     <div class="w-6 h-6 bg-black dark:bg-white rounded-full flex items-center justify-center shadow-md">
@@ -346,15 +370,13 @@
                 </div>
             </div>
 
-            <!-- Page Titles -->
             <div class="text-center md:text-left mb-10">
                 <h1 id="main-page-title" class="text-4xl md:text-6xl font-serif font-medium text-neutral-900 dark:text-white mb-4 tracking-tight leading-[1.1]">Product Catalog</h1>
                 <p id="main-page-desc" class="text-neutral-500 dark:text-neutral-400 text-lg md:text-xl max-w-2xl mx-auto md:mx-0 font-light leading-relaxed">
-                    Explore the collection by active ingredients, product line, or benefits.
+                    Explore collection by active ingredients, product line, or benefits.
                 </p>
             </div>
 
-            <!-- Search Bar -->
             <div id="search-container" class="relative max-w-3xl mx-auto group">
                 <div class="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none text-neutral-400 group-focus-within:text-loreal-500 transition-colors duration-300">
                     <i data-lucide="search" class="w-5 h-5"></i>
@@ -376,7 +398,6 @@
                 </div>
             </div>
 
-            <!-- Desktop Theme Toggle -->
             <button onclick="UI.toggleTheme()" class="hidden md:flex absolute top-2 right-0 p-3 rounded-full bg-white/80 dark:bg-white/10 border border-neutral-200 dark:border-white/10 text-neutral-600 dark:text-neutral-300 hover:bg-white dark:hover:bg-white/20 hover:border-neutral-400 dark:hover:border-white transition-all shadow-sm z-20 items-center justify-center gap-2 group backdrop-blur-md" title="Toggle Theme">
                 <i id="theme-icon-desktop" data-lucide="moon" class="w-5 h-5"></i>
                 <span class="text-xs font-bold opacity-0 group-hover:opacity-100 transition-opacity absolute top-full mt-1 whitespace-nowrap bg-black dark:bg-white text-white dark:text-black px-2 py-1 rounded text-[10px]">Theme</span>
@@ -386,7 +407,6 @@
         <div id="view-viewport" class="flex-1 overflow-y-auto px-6 md:px-12 pb-24 scroll-smooth relative z-10 w-full"></div>
     </main>
 
-    <!-- RIGHT SIDEBAR (Market Summary) -->
     <aside id="right-sidebar" class="w-80 content-card hidden xl:flex flex-col z-20 h-full shrink-0 border-l border-transparent dark:border-white/5 transition-all duration-300">
         <div class="p-6 border-b border-neutral-100 dark:border-white/5">
             <h3 class="font-serif italic text-lg text-neutral-900 dark:text-white flex items-center gap-2">
@@ -394,7 +414,6 @@
             </h3>
         </div>
         <div class="flex-1 overflow-y-auto p-6 space-y-8">
-            <!-- Market Trend Chart -->
             <div>
                 <div class="flex justify-between items-center mb-4">
                     <h4 class="text-[10px] font-bold text-neutral-400 dark:text-neutral-600 uppercase tracking-[0.15em]">Search Trends</h4>
@@ -407,7 +426,6 @@
                 </div>
             </div>
 
-            <!-- Top Rated Products -->
             <div>
                 <h4 class="text-[10px] font-bold text-neutral-400 dark:text-neutral-600 uppercase tracking-[0.15em] mb-6">Top Rated Products</h4>
                 <div class="space-y-3" id="market-summary-list"></div>
@@ -416,13 +434,13 @@
             <div class="pt-8 border-t border-neutral-100 dark:border-white/5">
                  <h4 class="text-[10px] font-bold text-neutral-400 dark:text-neutral-600 uppercase tracking-[0.15em] mb-5">Resources</h4>
                  <div class="space-y-4">
-                     <a href="#" class="flex items-center gap-3 text-sm text-neutral-600 dark:text-neutral-400 hover:text-loreal-600 dark:hover:text-loreal-400 transition-colors group">
-                         <div class="p-1.5 rounded-md bg-neutral-100 dark:bg-white/5 group-hover:bg-loreal-50 dark:group-hover:bg-loreal-500/10 transition-colors">
-                            <i data-lucide="download" class="w-4 h-4"></i>
-                         </div>
-                         Brand Guidelines
+                     <a href="#" onclick="Router.navigate('guidelines'); return false;" class="flex items-center gap-3 text-sm text-neutral-600 dark:text-neutral-400 hover:text-loreal-600 dark:hover:text-loreal-400 transition-colors group">
+                        <div class="p-1.5 rounded-md bg-neutral-100 dark:bg-white/5 group-hover:bg-loreal-50 dark:group-hover:bg-loreal-500/10 transition-colors">
+                           <i data-lucide="download" class="w-4 h-4"></i>
+                        </div>
+                        Brand Guidelines
                      </a>
-                     <a href="#" class="flex items-center gap-3 text-sm text-neutral-600 dark:text-neutral-400 hover:text-loreal-600 dark:hover:text-loreal-400 transition-colors group">
+                     <a href="#" onclick="Router.navigate('technical'); return false;" class="flex items-center gap-3 text-sm text-neutral-600 dark:text-neutral-400 hover:text-loreal-600 dark:hover:text-loreal-400 transition-colors group">
                          <div class="p-1.5 rounded-md bg-neutral-100 dark:bg-white/5 group-hover:bg-loreal-50 dark:group-hover:bg-loreal-500/10 transition-colors">
                             <i data-lucide="file-text" class="w-4 h-4"></i>
                          </div>
@@ -439,7 +457,6 @@
         </div>
     </aside>
 
-    <!-- MODAL -->
     <div id="detail-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4">
         <div class="absolute inset-0 bg-black/80 backdrop-blur-md transition-opacity" onclick="NewsModal.close() || Modal.close()"></div>
         <div class="relative bg-white/95 dark:bg-[#0a0a0a] w-full h-full md:max-w-5xl md:max-h-[90vh] md:rounded-3xl shadow-2xl shadow-black/20 overflow-y-auto flex flex-col border border-neutral-100 dark:border-white/10 backdrop-blur-xl">
@@ -530,7 +547,7 @@
                     date: "Oct 18, 2023",
                     summary: "New research reveals impact of blue light on skin aging.",
                     image: "https://images.unsplash.com/photo-1515377905703-c4788e51af15?w=800&q=80",
-                    content: "Recent studies from L'Oréal's R&D centers highlight the long-term effects of High Energy Visible (HEV) light."
+                    content: "Recent studies from L'Oréal's R&D centers highlight long-term effects of High Energy Visible (HEV) light."
                 }
             ];
 
@@ -556,9 +573,9 @@
                     category: cat,
                     type: cat.toLowerCase(),
                     date: date,
-                    summary: `An in-depth look at how ${topic} is evolving in the ${cat} sector with ${adj} solutions.`,
+                    summary: `An in-depth look at how ${topic} is evolving in ${cat} sector with ${adj} solutions.`,
                     image: image,
-                    content: `This article explores the latest developments in L'Oréal's ${topic} division. We discuss the impact of ${adj} technologies on the ${cat} landscape. Key findings include a 15% increase in efficiency and a significant reduction in environmental footprint. Experts believe this marks a turning point for industry as we move towards a more sustainable and inclusive future. Lorem ipsum dolor sit amet, consectetur adipiscing elit.`
+                    content: `This article explores latest developments in L'Oréal's ${topic} division. We discuss impact of ${adj} technologies on ${cat} landscape. Key findings include a 15% increase in efficiency and a significant reduction in environmental footprint. Experts believe this marks a turning point for industry as we move towards a more sustainable and inclusive future. Lorem ipsum dolor sit amet, consectetur adipiscing elit.`
                 });
             }
 
@@ -574,7 +591,8 @@
         sortBy: 'relevance',
         currentView: 'home',
         viewMode: 'grid',
-        newsViewMode: 'grid'
+        newsViewMode: 'grid',
+        techProductId: null
     };
 
     const Engine = {
@@ -605,7 +623,6 @@
             
             if(State.query.length > 0) {
                 document.getElementById('clear-search').classList.remove('opacity-0', 'pointer-events-none');
-                DB.searches[State.query] = (DB.searches[State.query] || 0) + 1;
             } else {
                 document.getElementById('clear-search').classList.add('opacity-0', 'pointer-events-none');
             }
@@ -726,7 +743,7 @@
 
             if (view === 'home') {
                 titleEl.innerText = 'Product Catalog';
-                descEl.innerText = 'Explore the collection by active ingredients, product line, or benefits.';
+                descEl.innerText = 'Explore collection by active ingredients, product line, or benefits.';
                 searchContainer.classList.remove('hidden');
                 descEl.classList.remove('hidden');
             } else if (view === 'analytics') {
@@ -735,9 +752,20 @@
                 searchContainer.classList.add('hidden');
                 descEl.classList.remove('hidden');
             } else if (view === 'admin') {
-                titleEl.innerText = 'Inventory Index';
-                descEl.classList.add('hidden');
+                titleEl.innerText = "Product Intelligence"; 
+                descEl.innerText = 'Deep dive into formulations, ingredients, and performance metrics.';
                 searchContainer.classList.add('hidden');
+                descEl.classList.add('hidden');
+            } else if (view === 'guidelines') {
+                titleEl.innerText = "Brand Guidelines"; 
+                descEl.innerText = 'Standard visual and interaction guidelines for L\'Oréal digital ecosystem.';
+                searchContainer.classList.add('hidden');
+                descEl.classList.add('hidden');
+            } else if (view === 'technical') {
+                titleEl.innerText = "Technical Data Sheets"; 
+                descEl.innerText = 'Official specifications, physical characteristics, and usage guidelines.';
+                searchContainer.classList.add('hidden');
+                descEl.classList.add('hidden');
             }
 
             document.querySelectorAll('.nav-item').forEach(el => {
@@ -746,6 +774,7 @@
                 const icon = el.querySelector('i');
                 if(icon) icon.classList.remove('text-loreal-500');
             });
+
             const activeLink = document.getElementById(`nav-${view}`);
             if(activeLink) {
                 activeLink.classList.add('bg-white', 'dark:bg-white', 'text-neutral-900', 'dark:text-neutral-900', 'border-loreal-500', 'shadow-sm');
@@ -761,7 +790,9 @@
             const viewport = document.getElementById('view-viewport');
             if (view === 'home') this.renderHome();
             else if (view === 'analytics') this.renderNews(); 
-            else if (view === 'admin') this.renderAdmin();
+            else if (view === 'admin') this.renderAdmin(); 
+            else if (view === 'guidelines') this.renderGuidelines(); 
+            else if (view === 'technical') this.renderTechnical();
 
             lucide.createIcons();
         },
@@ -870,54 +901,379 @@
 
         renderAdmin() {
             const viewport = document.getElementById('view-viewport');
+
+            const catCounts = {};
+            DB.products.forEach(p => {
+                catCounts[p.category] = (catCounts[p.category] || 0) + 1;
+            });
+            const sortedCats = Object.entries(catCounts).sort((a, b) => b[1] - a[1]);
+
+            const ingCounts = {};
+            DB.products.forEach(p => {
+                const ings = p.ingredients.split(',').map(s => s.trim());
+                ings.forEach(i => {
+                    ingCounts[i] = (ingCounts[i] || 0) + 1;
+                });
+            });
+            const sortedIngs = Object.entries(ingCounts).sort((a, b) => b[1] - a[1]).slice(0, 8);
+
             viewport.innerHTML = `
                 <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4 max-w-full">
-                    <h2 class="text-3xl font-serif text-neutral-900 dark:text-white">Inventory Index</h2>
-                    <button onclick="AdminActions.addMock()" class="bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 px-6 py-3 rounded-full text-xs font-bold uppercase tracking-widest transition hover:opacity-90 shadow-lg w-full md:w-auto justify-center flex items-center gap-2">
-                        <i data-lucide="plus" class="w-4 h-4"></i> Add Product
+                    <h2 class="text-3xl font-serif text-neutral-900 dark:text-white">Product Intelligence</h2>
+                    <button onclick="AdminActions.refresh()" class="bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 px-6 py-3 rounded-full text-xs font-bold uppercase tracking-widest transition hover:opacity-90 shadow-lg w-full md:w-auto justify-center flex items-center gap-2">
+                        <i data-lucide="refresh-cw" class="w-4 h-4"></i> Refresh Data
                     </button>
                 </div>
 
-                <div class="content-card rounded-2xl overflow-hidden border border-neutral-100 dark:border-white/5 shadow-soft w-full">
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-left min-w-[900px]">
-                            <thead class="bg-neutral-50 dark:bg-white/5 text-neutral-500 dark:text-neutral-400 text-[10px] uppercase tracking-widest font-bold">
-                                <tr>
-                                    <th class="p-5">SKU</th>
-                                    <th class="p-5">Product Line</th>
-                                    <th class="p-5">Volume</th>
-                                    <th class="p-5">Concerns</th>
-                                    <th class="p-5">Price</th>
-                                    <th class="p-5">Status</th>
-                                </tr>
-                            </thead>
-                            <tbody class="divide-y divide-neutral-100 dark:divide-white/5 text-sm text-neutral-700 dark:text-neutral-300">
-                                ${DB.products.slice(0, 50).map(p => `
-                                    <tr class="hover:bg-neutral-50 dark:hover:bg-white/5 transition group">
-                                        <td class="p-5 font-mono text-xs text-neutral-500 dark:text-neutral-500">${p.id}</td>
-                                        <td class="p-5 font-medium">
-                                            <div class="text-neutral-900 dark:text-white group-hover:text-loreal-600 dark:group-hover:text-loreal-500 transition-colors">${p.name}</div>
-                                            <div class="text-xs text-neutral-400 dark:text-neutral-600">${p.range}</div>
-                                        </td>
-                                        <td class="p-5 font-mono text-neutral-500 dark:text-neutral-500">${p.volume}</td>
-                                        <td class="p-5">
-                                            <div class="flex flex-wrap gap-1">
-                                                ${p.concerns.slice(0,1).map(c => `<span class="tag">${c}</span>`).join('')}
-                                            </div>
-                                        </td>
-                                        <td class="p-5 font-mono text-neutral-900 dark:text-white">${Utils.formatRupiah(p.price)}</td>
-                                        <td class="p-5">
-                                            <span class="text-[10px] font-bold px-2.5 py-1 rounded ${p.stockStatus === 'In Stock' ? 'badge-success' : p.stockStatus === 'Low Stock' ? 'badge-warning' : 'badge-error'}">
-                                                ${p.stockStatus}
-                                            </span>
-                                        </td>
-                                    </tr>
-                                `).join('')}
-                            </tbody>
-                        </table>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                     <div class="content-card rounded-2xl p-6 border-neutral-100 dark:border-white/5">
+                        <div class="flex justify-between items-start mb-2">
+                            <h4 class="text-sm font-bold text-neutral-500 dark:text-neutral-400 uppercase tracking-widest">Total SKUs</h4>
+                            <i data-lucide="package" class="w-5 h-5 text-loreal-500"></i>
+                        </div>
+                        <div class="text-4xl font-serif font-bold text-neutral-900 dark:text-white">${DB.products.length}</div>
+                     </div>
+
+                     <div class="content-card rounded-2xl p-6 border-neutral-100 dark:border-white/5">
+                        <div class="flex justify-between items-start mb-2">
+                            <h4 class="text-sm font-bold text-neutral-500 dark:text-neutral-400 uppercase tracking-widest">Top Category</h4>
+                            <i data-lucide="layout-grid" class="w-5 h-5 text-loreal-500"></i>
+                        </div>
+                        <div class="text-xl font-medium text-neutral-900 dark:text-white">${sortedCats[0][0]}</div>
+                        <div class="text-sm text-neutral-400 mt-1">${sortedCats[0][1]} Items</div>
+                     </div>
+
+                     <div class="content-card rounded-2xl p-6 border-neutral-100 dark:border-white/5">
+                        <div class="flex justify-between items-start mb-2">
+                            <h4 class="text-sm font-bold text-neutral-500 dark:text-neutral-400 uppercase tracking-widest">Top Ingredient</h4>
+                            <i data-lucide="flask-conical" class="w-5 h-5 text-loreal-500"></i>
+                        </div>
+                        <div class="text-lg font-medium text-neutral-900 dark:text-white leading-tight">${sortedIngs[0][0]}</div>
+                        <div class="text-sm text-neutral-400 mt-1">Used in ${sortedIngs[0][1]} Products</div>
+                     </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div class="content-card rounded-2xl p-6 border-neutral-100 dark:border-white/5">
+                        <h4 class="text-sm font-bold text-neutral-500 dark:text-neutral-400 uppercase tracking-widest mb-6">Category Distribution</h4>
+                        <div class="h-64 w-full"><canvas id="admin-cat-chart"></canvas></div>
+                    </div>
+
+                    <div class="content-card rounded-2xl p-6 border-neutral-100 dark:border-white/5">
+                        <h4 class="text-sm font-bold text-neutral-500 dark:text-neutral-400 uppercase tracking-widest mb-6">Key Ingredients</h4>
+                        <div class="space-y-4">
+                            ${sortedIngs.map((item, idx) => `
+                                <div class="flex items-center justify-between group cursor-pointer">
+                                    <span class="text-sm font-medium text-neutral-700 dark:text-neutral-300 transition-colors group-hover:text-loreal-600">${item[0]}</span>
+                                        <div class="w-32 h-2 bg-neutral-100 dark:bg-white/10 rounded-full overflow-hidden">
+                                            <div class="h-full bg-loreal-500 rounded-full transition-all" style="width: ${(item[1] / sortedIngs[0][1]) * 100}%"></div>
+                                        </div>
+                                </div>
+                            `).join('')}
+                        </div>
                     </div>
                 </div>
             `;
+
+            setTimeout(() => {
+                const ctx = document.getElementById('admin-cat-chart');
+                if(ctx) {
+                    new Chart(ctx, {
+                        type: 'doughnut',
+                        data: {
+                            labels: sortedCats.map(x => x[0]),
+                            datasets: [{
+                                data: sortedCats.map(x => x[1]),
+                                backgroundColor: ['#C5A059', '#a3a3a3', '#d4d4d4', '#000000'],
+                                borderWidth: 0,
+                                hoverOffset: 4
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: { 
+                                legend: { display: false },
+                                tooltip: {
+                                    backgroundColor: 'rgba(0,0,0,0.8)',
+                                    bodyColor: '#fff',
+                                    padding: 10
+                                }
+                            },
+                            cutout: '70%'
+                        }
+                    });
+                }
+            }, 100);
+            
+            lucide.createIcons();
+        },
+
+        renderGuidelines() {
+            const viewport = document.getElementById('view-viewport');
+            
+            viewport.innerHTML = `
+                <div class="max-w-4xl mx-auto py-8 animate-fade-in">
+                    <button onclick="Router.navigate('home')" class="flex items-center gap-2 text-sm text-neutral-500 hover:text-loreal-600 dark:hover:text-loreal-400 mb-6 font-medium transition-colors">
+                        <i data-lucide="arrow-left" class="w-4 h-4"></i> Back to Catalog
+                    </button>
+                    
+                    <div class="pdf-container rounded-lg overflow-hidden border-l-4 border-loreal-500">
+                        
+                        <div class="bg-neutral-50 dark:bg-neutral-900/50 p-10 border-b border-neutral-200 dark:border-white/10 flex justify-between items-start">
+                            <div>
+                                <h1 class="text-3xl md:text-4xl font-serif font-bold text-neutral-900 dark:text-white mb-2">Digital Brand Guidelines</h1>
+                                <p class="text-sm text-neutral-500 dark:text-neutral-400 uppercase tracking-widest">Version 1.0 • Internal Use Only</p>
+                            </div>
+                            <div class="hidden md:block">
+                                <div class="w-16 h-16 bg-loreal-500 rounded-full flex items-center justify-center text-white font-serif font-bold text-2xl italic shadow-lg">L</div>
+                            </div>
+                        </div>
+
+                        <div class="p-10 md:p-16 space-y-12 text-sm md:text-base">
+                            
+                            <section>
+                                <h2 class="pdf-section-title text-2xl font-bold mb-4 pb-2">1. Introduction</h2>
+                                <p class="text-neutral-600 dark:text-neutral-300 mb-4 leading-relaxed">
+                                    This document serves as foundational standard for all development and management activities of <strong>L'Oréal Product Intelligence Engine</strong>. Its primary objective is to ensure visual consistency, optimal functionality, and a premium User Experience (UX) that aligns with L'Oréal's global standards.
+                                </p>
+                            </section>
+
+                            <section>
+                                <h2 class="pdf-section-title text-2xl font-bold mb-6 pb-2">2. Visual Identity System</h2>
+                                
+                                <div class="mb-6">
+                                    <h3 class="font-bold text-neutral-900 dark:text-white mb-3">2.1 Typography</h3>
+                                    <div class="bg-neutral-50 dark:bg-white/5 p-6 rounded-lg border border-neutral-200 dark:border-white/10">
+                                        <div class="mb-4">
+                                            <span class="text-xs text-neutral-400 uppercase tracking-widest block mb-1">Primary Serif (Headings)</span>
+                                            <span class="text-3xl font-serif text-neutral-900 dark:text-white">Playfair Display</span>
+                                        </div>
+                                        <div>
+                                            <span class="text-xs text-neutral-400 uppercase tracking-widest block mb-1">Primary Sans (Body/UI)</span>
+                                            <span class="text-xl font-sans text-neutral-600 dark:text-neutral-300">Inter</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <h3 class="font-bold text-neutral-900 dark:text-white mb-3">2.2 Color Palette</h3>
+                                    <div class="pdf-grid">
+                                        <div>
+                                            <div class="pdf-color-swatch bg-[#C5A059] mb-2"></div>
+                                            <div class="font-bold text-neutral-900 dark:text-white">L'Oréal Gold</div>
+                                            <div class="text-xs text-neutral-500 font-mono">#C5A059</div>
+                                        </div>
+                                        <div>
+                                            <div class="pdf-color-swatch bg-neutral-900 dark:bg-white mb-2"></div>
+                                            <div class="font-bold text-neutral-900 dark:text-white">Primary Text</div>
+                                            <div class="text-xs text-neutral-500 font-mono">#111 / #FFF</div>
+                                        </div>
+                                        <div>
+                                            <div class="pdf-color-swatch bg-neutral-100 dark:bg-white/5 mb-2 border border-neutral-200"></div>
+                                            <div class="font-bold text-neutral-900 dark:text-white">Surface</div>
+                                            <div class="text-xs text-neutral-500 font-mono">#F5F5F5</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </section>
+
+                            <section>
+                                <h2 class="pdf-section-title text-2xl font-bold mb-6 pb-2">3. Interface Principles (UI)</h2>
+                                <ul class="space-y-3 text-neutral-600 dark:text-neutral-300 list-disc pl-5">
+                                    <li><strong>Premium Whitespace:</strong> Generous use of negative space to create an elegant feel and improve readability.</li>
+                                    <li><strong>Subtle Glassmorphism:</strong> Blur effects on side panels and cards to provide modern depth without sacrificing performance.</li>
+                                    <li><strong>Micro-Interactions:</strong> Smooth transitions on every hover, focus state, and page transition to provide instant feedback.</li>
+                                </ul>
+                            </section>
+
+                            <section>
+                                <h2 class="pdf-section-title text-2xl font-bold mb-6 pb-2">4. Technical Standards</h2>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div class="bg-neutral-50 dark:bg-white/5 p-4 rounded border border-neutral-200 dark:border-white/10">
+                                        <h4 class="font-bold text-neutral-900 dark:text-white mb-2">Responsiveness</h4>
+                                        <p class="text-xs text-neutral-500">Layout must be fully responsive from mobile breakpoint (320px) to desktop XL (1280px+).</p>
+                                    </div>
+                                    <div class="bg-neutral-50 dark:bg-white/5 p-4 rounded border border-neutral-200 dark:border-white/10">
+                                        <h4 class="font-bold text-neutral-900 dark:text-white mb-2">Dark Mode</h4>
+                                        <p class="text-xs text-neutral-500">Support for dark mode automatically following system preferences or manual toggle.</p>
+                                    </div>
+                                    <div class="bg-neutral-50 dark:bg-white/5 p-4 rounded border border-neutral-200 dark:border-white/10">
+                                        <h4 class="font-bold text-neutral-900 dark:text-white mb-2">Accessibility</h4>
+                                        <p class="text-xs text-neutral-500">Minimum AA contrast ratios, use of ARIA attributes, and keyboard navigation support.</p>
+                                    </div>
+                                    <div class="bg-neutral-50 dark:bg-white/5 p-4 rounded border border-neutral-200 dark:border-white/10">
+                                        <h4 class="font-bold text-neutral-900 dark:text-white mb-2">Performance</h4>
+                                        <p class="text-xs text-neutral-500">Loading time under 2s, lazy loading on images, and script optimization.</p>
+                                    </div>
+                                </div>
+                            </section>
+                            
+                            <div class="border-t border-neutral-200 dark:border-white/10 pt-8 mt-8 text-center">
+                                <button onclick="window.print()" class="inline-flex items-center gap-2 px-6 py-3 bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 rounded-full font-bold text-xs uppercase tracking-widest hover:opacity-90 transition-opacity">
+                                    <i data-lucide="printer" class="w-4 h-4"></i> Print Document
+                                </button>
+                                <p class="mt-4 text-xs text-neutral-400">© 2023 L'Oréal Corporate. All Rights Reserved.</p>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            `;
+            lucide.createIcons();
+        },
+
+        renderTechnical() {
+            const viewport = document.getElementById('view-viewport');
+            const listProducts = DB.products.sort((a, b) => a.name.localeCompare(b.name));
+            
+            if (!State.techProductId && listProducts.length > 0) {
+                State.techProductId = listProducts[0].id;
+            }
+
+            const activeProduct = listProducts.find(p => p.id === State.techProductId) || listProducts[0];
+
+            const techData = {
+                pH: (5.0 + Math.random()).toFixed(1),
+                density: (0.9 + Math.random() * 0.2).toFixed(3),
+                viscosity: Math.floor(Math.random() * 5000 + 1000) + ' cps',
+                shelfLife: '36 Months',
+                batch: `BATCH-${Math.floor(Math.random()*10000)}`,
+                mfgDate: '2023-10-01',
+                storage: 'Store below 30°C. Keep away from direct sunlight.',
+                hazard: 'Causes serious eye irritation. Wear protective gloves/eye protection.',
+                activeConc: (1 + Math.random() * 5).toFixed(1) + '%'
+            };
+
+            viewport.innerHTML = `
+                <div class="flex flex-col h-full gap-6 animate-fade-in">
+                    
+                    <button onclick="Router.navigate('home')" class="flex items-center gap-2 text-sm text-neutral-500 hover:text-loreal-600 dark:hover:text-loreal-400 mb-2 font-medium transition-colors w-max">
+                        <i data-lucide="arrow-left" class="w-4 h-4"></i> Back to Catalog
+                    </button>
+
+                    <div class="flex flex-col lg:flex-row flex-1 overflow-hidden rounded-xl border border-neutral-100 dark:border-white/5">
+                        
+                        <div class="w-full lg:w-1/3 content-card rounded-t-xl lg:rounded-none lg:rounded-l-xl border-b lg:border-b-0 lg:border-r border-neutral-100 dark:border-white/5 flex flex-col overflow-hidden">
+                            <div class="p-4 border-b border-neutral-100 dark:border-white/5 bg-neutral-50 dark:bg-white/5">
+                                <h3 class="font-serif font-bold text-neutral-900 dark:text-white">Product Library</h3>
+                            </div>
+                            <div class="p-4">
+                                <input type="text" placeholder="Search product..." class="w-full px-3 py-2 text-sm border border-neutral-200 dark:border-white/10 rounded-lg bg-white dark:bg-black text-neutral-900 dark:text-white focus:outline-none focus:border-loreal-500 mb-4">
+                            </div>
+                            <div class="flex-1 overflow-y-auto space-y-1 px-2 pb-4">
+                                ${listProducts.map(p => `
+                                    <button onclick="State.techProductId = '${p.id}'; Router.renderTechnical();" 
+                                        class="tech-sheet-list-item w-full text-left px-4 py-3 rounded-lg text-xs transition-all flex flex-col gap-1 border border-transparent hover:bg-neutral-50 dark:hover:bg-white/5 ${p.id === State.techProductId ? 'active' : ''}">
+                                        <span class="font-bold text-neutral-900 dark:text-white truncate">${p.name}</span>
+                                        <span class="text-[10px] text-neutral-500 font-mono">${p.id}</span>
+                                    </button>
+                                `).join('')}
+                            </div>
+                        </div>
+
+                        <div class="w-full lg:w-2/3 pdf-container rounded-b-xl lg:rounded-none lg:rounded-r-xl overflow-hidden flex flex-col h-auto lg:h-auto">
+                            <div class="p-6 md:p-8 border-b border-neutral-200 dark:border-white/10 flex justify-between items-start shrink-0 bg-neutral-50 dark:bg-white/5">
+                                <div>
+                                    <div class="flex items-center gap-3 mb-2">
+                                        <h1 class="text-xl md:text-2xl font-serif font-bold text-neutral-900 dark:text-white">Technical Data Sheet</h1>
+                                        <span class="px-2 py-1 bg-loreal-500/10 text-loreal-600 dark:text-loreal-400 text-[10px] font-bold uppercase rounded border border-loreal-500/20">Confidential</span>
+                                    </div>
+                                    <p class="text-xs text-neutral-500 font-mono md:text-sm">${activeProduct.id} • Revision A • ${techData.mfgDate}</p>
+                                </div>
+                                <div class="w-10 h-10 bg-loreal-500 rounded-full flex items-center justify-center text-white font-serif font-bold italic shadow-lg shrink-0">L</div>
+                            </div>
+
+                            <div class="flex-1 overflow-y-auto p-6 md:p-8 md:scrolling-touch">
+                                
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 mb-8">
+                                    <div>
+                                        <h4 class="text-xs font-bold text-neutral-400 uppercase tracking-widest mb-4 border-b border-neutral-200 dark:border-white/10 pb-2">Product Identification</h4>
+                                        <div class="space-y-3 text-xs md:text-sm">
+                                            <div class="flex justify-between"><span class="text-neutral-500">Name:</span> <span class="font-medium text-neutral-900 dark:text-white text-right truncate max-w-[60%]">${activeProduct.name}</span></div>
+                                            <div class="flex justify-between"><span class="text-neutral-500">SKU Code:</span> <span class="font-mono text-neutral-900 dark:text-white">${activeProduct.id}</span></div>
+                                            <div class="flex justify-between"><span class="text-neutral-500">Range:</span> <span class="text-neutral-900 dark:text-white">${activeProduct.range}</span></div>
+                                            <div class="flex justify-between"><span class="text-neutral-500">Category:</span> <span class="text-neutral-900 dark:text-white">${activeProduct.category}</span></div>
+                                            <div class="flex justify-between"><span class="text-neutral-500">Volume:</span> <span class="text-neutral-900 dark:text-white">${activeProduct.volume}</span></div>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <h4 class="text-xs font-bold text-neutral-400 uppercase tracking-widest mb-4 border-b border-neutral-200 dark:border-white/10 pb-2">Physico-Chemical Properties</h4>
+                                        <div class="space-y-3 text-xs md:text-sm">
+                                            <div class="flex justify-between"><span class="text-neutral-500">pH Value (at 20°C):</span> <span class="font-mono text-neutral-900 dark:text-white">${techData.pH}</span></div>
+                                            <div class="flex justify-between"><span class="text-neutral-500">Density (g/cm³):</span> <span class="font-mono text-neutral-900 dark:text-white">${techData.density}</span></div>
+                                            <div class="flex justify-between"><span class="text-neutral-500">Viscosity:</span> <span class="font-mono text-neutral-900 dark:text-white">${techData.viscosity}</span></div>
+                                            <div class="flex justify-between"><span class="text-neutral-500">Appearance:</span> <span class="text-neutral-900 dark:text-white">Homogeneous Gel/Cream</span></div>
+                                            <div class="flex justify-between"><span class="text-neutral-500">Odor:</span> <span class="text-neutral-900 dark:text-white">Characteristic Fragrance</span></div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="mb-8">
+                                    <h4 class="text-xs font-bold text-neutral-400 uppercase tracking-widest mb-4 border-b border-neutral-200 dark:border-white/10 pb-2">Composition & Performance</h4>
+                                    <div class="bg-neutral-50 dark:bg-white/5 p-4 md:p-6 rounded-lg border border-neutral-200 dark:border-white/10 text-xs md:text-sm space-y-3">
+                                        <div class="flex justify-between items-center">
+                                            <span class="font-medium text-neutral-900 dark:text-white">Active Ingredients</span>
+                                            <span class="text-neutral-500 text-xs uppercase tracking-widest">Approx. ${techData.activeConc}</span>
+                                        </div>
+                                        <p class="text-neutral-600 dark:text-neutral-300 font-mono text-[10px] md:text-xs leading-relaxed">
+                                            ${activeProduct.ingredients}
+                                        </p>
+                                        <div class="mt-4 pt-4 border-t border-neutral-200 dark:border-white/10 flex justify-between">
+                                            <span class="text-neutral-500">Stability Test (40°C/75% RH):</span>
+                                            <span class="text-emerald-600 dark:text-emerald-500 font-bold">Passed (3 Months)</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="mb-8">
+                                    <h4 class="text-xs font-bold text-neutral-400 uppercase tracking-widest mb-4 border-b border-neutral-200 dark:border-white/10 pb-2">Usage Guidelines</h4>
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-xs md:text-sm">
+                                        <div>
+                                            <span class="block text-neutral-500 mb-1">Application Method:</span>
+                                            <span class="block text-neutral-900 dark:text-white">Apply to cleansed skin. Massage gently until absorbed. Use morning and evening.</span>
+                                        </div>
+                                        <div>
+                                            <span class="block text-neutral-500 mb-1">Frequency:</span>
+                                            <span class="block text-neutral-900 dark:text-white">Daily</span>
+                                        </div>
+                                        <div>
+                                            <span class="block text-neutral-500 mb-1">Target Area:</span>
+                                            <span class="block text-neutral-900 dark:text-white">${activeProduct.category === 'Haircare' ? 'Scalp & Hair' : 'Face & Neck'}</span>
+                                        </div>
+                                        <div>
+                                            <span class="block text-neutral-500 mb-1">Precautions:</span>
+                                            <span class="block text-neutral-900 dark:text-white">Avoid contact with eyes. If irritation occurs, discontinue use.</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="mb-6">
+                                    <h4 class="text-xs font-bold text-neutral-400 uppercase tracking-widest mb-4 border-b border-neutral-200 dark:border-white/10 pb-2">Storage & Handling</h4>
+                                    <div class="bg-red-50 dark:bg-red-900/10 p-3 md:p-4 rounded border border-red-100 dark:border-red-900/30">
+                                        <div class="flex items-start gap-3">
+                                            <i data-lucide="alert-triangle" class="w-5 h-5 text-red-600 dark:text-red-500 shrink-0"></i>
+                                            <div class="text-xs md:text-sm">
+                                                <p class="text-neutral-800 dark:text-neutral-200 mb-2"><strong>Storage:</strong> ${techData.storage}</p>
+                                                <p class="text-neutral-600 dark:text-neutral-400"><strong>Shelf Life:</strong> ${techData.shelfLife} after opening. Keep out of reach of children.</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="mt-auto pt-4 border-t border-neutral-200 dark:border-white/10 flex justify-between items-center text-xs text-neutral-400">
+                                    <span>Generated by L'Oréal Intelligence Engine</span>
+                                    <span>Ref: ${techData.batch}</span>
+                                </div>
+
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+            `;
+            lucide.createIcons();
         }
     };
 
@@ -1035,7 +1391,12 @@
     };
 
     const AdminActions = {
-        addMock() {
+        refresh() {
+            Router.renderAdmin();
+            UI.initScrollObserver();
+            UI.showToast('Data refreshed successfully', 'info');
+        },
+        addMock() { 
             const name = prompt("Enter New Product Name:");
             if(name) {
                 const newProd = {
@@ -1052,7 +1413,7 @@
                     image: `https://picsum.photos/seed/${Date.now()}/400/400`
                 };
                 DB.products.unshift(newProd);
-                Router.renderAdmin();
+                Router.renderAdmin(); 
             }
         }
     };
@@ -1108,6 +1469,31 @@
 
             const wrappers = document.querySelectorAll('.card-wrapper');
             wrappers.forEach(wrapper => observer.observe(wrapper));
+        },
+        
+        showToast(message, type = 'info') {
+            const container = document.getElementById('toast-container');
+            if(!document.getElementById('toast-container')) {
+                const div = document.createElement('div');
+                div.id = 'toast-container';
+                div.className = 'fixed bottom-4 right-4 z-[100] flex flex-col gap-2 pointer-events-none';
+                document.body.appendChild(div);
+            }
+            
+            const toast = document.createElement('div');
+            toast.className = `px-6 py-4 rounded-xl shadow-xl text-sm font-medium transition-all duration-300 transform translate-y-4 opacity-0 ${type === 'error' ? 'bg-red-500 text-white' : 'bg-neutral-900 dark:bg-white text-white dark:text-neutral-900'}`;
+            toast.innerText = message;
+            
+            document.getElementById('toast-container').appendChild(toast);
+            
+            requestAnimationFrame(() => {
+                toast.classList.remove('translate-y-4', 'opacity-0');
+            });
+            
+            setTimeout(() => {
+                toast.classList.add('translate-y-4', 'opacity-0');
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
         },
 
         toggleMobileSidebar() {
@@ -1167,7 +1553,6 @@
         }
     };
 
-    // Market Summary Logic
     const MarketSummary = {
         init() {
             this.renderTrendChart();
@@ -1306,7 +1691,6 @@
             Router.renderHome();
         }
 
-        // Initialize Market Summary
         MarketSummary.init();
         
         const handleResize = () => {
