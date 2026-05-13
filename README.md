@@ -1,12 +1,8 @@
 ---
-title: Lore Ai
-emoji: ⚡
-colorFrom: gray
+title: LORE-AI
+emoji: 🧴
+colorFrom: purple
 colorTo: gray
 sdk: docker
-pinned: false
-license: other
-short_description: L'ORE-AI Fragrance Concierge Chatbot
+app_port: 7860
 ---
-
-Check out the configuration reference at https://huggingface.co/docs/hub/spaces-config-reference

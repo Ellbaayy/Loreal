@@ -1,0 +1,11 @@
+.env
+.env.local
+node_modules
+.git
+*.log
+.gitignore
+Dockerfile
+docker-compose*
+README.md
+SETUP_LOCAL.md
+*.zip

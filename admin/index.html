@@ -1,0 +1,1074 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>L'ORE-AI — Admin</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+    --ink:#0a0810;
+    --smoke:#14101c;
+    --rose:#c8707c;
+    --petal:#f0d0d4;
+    --mist:#f7f3f0;
+    --rim:rgba(255,255,255,.10);
+    --glass:rgba(20,16,28,.65);
+}
+html,body{height:100%}
+body{
+    font-family:'DM Sans',sans-serif;
+    background:var(--ink);
+    color:var(--mist);
+    min-height:100vh;
+    overflow-x:hidden;
+    cursor:none;
+}
+::-webkit-scrollbar{width:3px}
+::-webkit-scrollbar-thumb{background:var(--rose);border-radius:2px}
+#page-bg{
+    position:fixed;inset:0;z-index:0;
+    background:url('data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wCEAAkGBxMREhUSEhMWFRUVFRUXFxUYFRcXFxgYFxUWFhgWFR0YHSggGBolHRYVIjEhJSkrLi4uFx8zODMtNygtLisBCgoKDg0OGhAQGC0lHSUtLy0tLS03Ly0tLS0tLS0tKy0tLS0tLS0tLSstKy0tLTAtLS0tLSstKy0tLS0tLS0tLf/AABEIALcBEwMBIgACEQEDEQH/xAAcAAABBAMBAAAAAAAAAAAAAAACAAEDBgQFBwj/xABCEAACAQIEAwYDBAkDAgcBAAABAhEAAwQSITEFQVEGEyJhcYEHMpEUQlKhIzNigrHB0eHwcpLxFaI0Q2Nzk7LCCP/EABoBAQADAQEBAAAAAAAAAAAAAAABAgMEBQb/xAAqEQEBAAIBAwMCBQUAAAAAAAAAAQIRAwQhMRJB8GGhEzKBkbEFUcHR8f/aAAwDAQACEQMRAD8A6eRRBSOdFlpieVQHDUamgikKCWmmh7smjFvzoH0oC3SjyjlSVTUgINDEVOFpaf8ANACmimmJFAWjkaCUE9CFmn7ugeKVMDRTQCaGKILVf4z244dg5F7FW8w+4h7x56FUnL7xUDeC1RBDO+kbVyrH/GY3WNvh2Ce63Jrk6dDktyY9WFam/wD9d4h+vxQwts/ctnKQOkW9SPJmqR1fjnaLCYMTicRbtmJylpc+iLLH2FULjXxqwqSuEsXL518THu00EkjQsQPMCq9a+HmFsw113vEnUscqk77Lr13Y1deE8Ms2jltWraK0ghVABEa5o396rub0nTl3GvihxPFSFuDDoZ8Nlcpj/WZefQiqjfD3WL3XZ2O7MxYn1J1NWntbwFcDiTZyfoz47bamUJ21PzLqPYHnWmLADQgfu7ydtJjQ1ppDCtYYen5n36UxWsx1BkgrvsJgdB/GguWTuNqnQxYqO6kisgihIqBmdi+0k/DsUl1Xkr8t1Px2zuPUbjzAr1Dgb6XraXrbBkuKGVhzBEivJGJtxrXVPgh2v7t/+n3j4LhJsMdluHVrc9G3HnP4qrR2kioylTkU0VAhy08VJFCRQBFKjilQIkkwPc/0qVUFBZEelTkVIgcCYqa3bigtpvO9TLQKKBlJ9K13Ge0FrDQpl7p+W0urGdifwjzPtNaspfuMt+64UAHKimMjFWHhB+cwd9WkaCKnSNrRk86hI5A/lWr4N2hS83cuQl6JCkjxrHzLGk7+GTH5DemAPSoSjOlQPM1MG8tTypKmuu9Ay3NhlIp3UmpMlFFBDky1JmoqYIKBjBrmHxR+JN7h15cNhrSZigc3bgJHiJACKCJIjczvtXUorl3x07Ld/hhjLYl7Gjgc7ZO/sT+flQcqu9oMbxMsuIxtzLztjwoQf2EhT01HOsrhXBMOCFK57kkCZIJmBA2P051T8DiTadXHI6jqOYrtfZTgQXu8SWVgyZkA1jMNGnrB286yzmVy1PC8skZPGeCMAoZQgHJdI+mgPpVkTDCjWo7mIC7sPSttjMYpbti4rhpZhoGXciefvvUvBcBcUHlByqW/DvMczy6aVqMRxtGvrbDmQZkEhZ5L0M1bcFjFYAbHp/SsJhhc/VFrbJpreMdnbV8A3ba3iklQ4k6jUCdNYGnlVewvBbWHYXcOiJcOvdiGYRO51IOp0HKr8zgVzntPat2bxuSwVySANs25A1Hrv16VXqrlhjvFrwSZXdZHGbWDxlljiQqXAIF1V8anlBA1Gmx0MVVeA9jkv2kJusbl27esJlT9Cr2gCi3mzZ1N0AsrAQNJB2O2w2O75hNpXnoxDsDyaWOeehmlxzBDDIMRgjetpBXFW1uOjAzKlxM5NWB5DTqTWfB1HVar8vDrw0XaThmGfA2cRat4bDXC90iyMQWumypFtUZSxNy9mDsWhQBpvVIIqxYvFEsVtIqBgGhEGp89N9AZHrWiu7z11/rXdL...');
+    filter:brightness(.12) saturate(1.4);
+    animation:bgpan 25s ease-in-out infinite alternate;
+}
+@keyframes bgpan{from{transform:scale(1.05) translate(0,0)}to{transform:scale(1.08) translate(-1%,1%)}}
+#page-grad{
+    position:fixed;inset:0;z-index:0;
+    background:
+        radial-gradient(ellipse at 15% 85%, rgba(200,112,124,.07) 0%,transparent 50%),
+        radial-gradient(ellipse at 90% 10%, rgba(200,112,124,.05) 0%,transparent 45%),
+        linear-gradient(170deg,rgba(10,8,16,.5) 0%,rgba(10,8,16,.25) 100%);
+}
+#cur{
+    position:fixed;width:12px;height:12px;
+    border-radius:50%;background:var(--rose);
+    pointer-events:none;z-index:99998;
+    mix-blend-mode:difference;
+    transform:translate(-50%,-50%);
+    transition:transform .12s ease,width .25s,height .25s;
+}
+#cur2{
+    position:fixed;width:36px;height:36px;
+    border-radius:50%;border:1px solid rgba(200,112,124,.5);
+    pointer-events:none;z-index:99997;
+    transform:translate(-50%,-50%);
+    transition:transform .35s ease;
+}
+body:hover #cur{transform:translate(-50%,-50%) scale(1)}
+.login-box{
+    background:rgba(20,16,28,.65);
+    backdrop-filter:blur(20px);
+    border:1px solid rgba(255,255,255,.1);
+    border-radius:28px;
+    padding:48px 40px;
+    width:380px;
+    max-width:90vw;
+    text-align:center;
+    animation:lfade .5s ease;
+    position:relative;z-index:10;
+}
+@keyframes lfade{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:none}}
+.login-logo{
+    font-family:'Cormorant',serif;
+    font-size:2rem;font-weight:300;
+    letter-spacing:12px;color:#f0d0d4;
+    margin-bottom:6px;
+}
+.login-sub{
+    font-size:.6rem;letter-spacing:5px;
+    text-transform:uppercase;
+    color:rgba(247,243,240,.3);
+    margin-bottom:36px;
+}
+.login-label{
+    display:block;text-align:left;
+    font-size:.65rem;letter-spacing:3px;
+    text-transform:uppercase;color:#c8707c;
+    margin-bottom:10px;
+}
+.login-input{
+    width:100%;
+    background:rgba(255,255,255,.04);
+    border:none;border-bottom:1px solid rgba(255,255,255,.12);
+    padding:12px 0;color:#f7f3f0;
+    font-family:'DM Sans',sans-serif;font-size:1rem;
+    outline:none;transition:border-color .3s;
+}
+.login-input:focus{border-color:#c8707c}
+.login-input::placeholder{color:rgba(247,243,240,.2)}
+.login-btn{
+    width:100%;background:#c8707c;color:#fff;
+    border:none;padding:14px;border-radius:100px;
+    font-family:'DM Sans',sans-serif;font-size:.75rem;
+    letter-spacing:3px;text-transform:uppercase;
+    cursor:pointer;transition:all .3s;
+    margin-top:32px;
+    box-shadow:0 12px 32px rgba(200,112,124,.3);
+}
+.login-btn:hover{background:#a8505c;box-shadow:0 18px 40px rgba(200,112,124,.45);transform:translateY(-2px)}
+.login-error{color:#e08080;font-size:.8rem;margin-top:16px}
+#loginPage{display:none;position:fixed;inset:0;z-index:500;align-items:center;justify-content:center;background:#0a0810}
+#loginPage.active{display:flex}
+#dashboardPage{display:none}
+#dashboardPage.active{display:block}
+
+.page{position:relative;z-index:1;min-height:100vh;display:flex;flex-direction:column}
+#hdr{
+    position:sticky;top:0;z-index:100;
+    display:flex;align-items:center;justify-content:space-between;
+    padding:20px 48px;
+    background:rgba(10,8,16,.75);
+    backdrop-filter:blur(22px);
+    border-bottom:1px solid var(--rim);
+}
+.hdr-left{display:flex;align-items:baseline;gap:14px}
+.hdr-logo{font-family:'Cormorant',serif;font-size:1.7rem;font-weight:300;letter-spacing:10px;color:var(--mist)}
+.hdr-badge{
+    font-size:.55rem;letter-spacing:4px;text-transform:uppercase;
+    color:var(--rose);border:1px solid rgba(200,112,124,.4);
+    padding:3px 10px;border-radius:100px;
+}
+.hdr-right{display:flex;align-items:center;gap:16px}
+.back-link{
+    display:inline-flex;align-items:center;gap:6px;
+    background:none;border:1px solid var(--rim);
+    color:rgba(247,243,240,.45);
+    padding:9px 20px;border-radius:100px;
+    font-family:'DM Sans',sans-serif;font-size:.7rem;
+    letter-spacing:2px;text-transform:uppercase;
+    text-decoration:none;transition:all .3s;cursor:pointer;
+}
+.back-link:hover{border-color:rgba(200,112,124,.5);color:var(--mist)}
+
+.main{flex:1;padding:40px 48px 60px;max-width:1500px;width:100%;margin:0 auto}
+
+.alert{
+    display:flex;align-items:center;gap:14px;
+    padding:16px 22px;border-radius:16px;margin-bottom:28px;
+    backdrop-filter:blur(12px);font-size:.85rem;
+    border-left:3px solid;animation:alin .4s ease;
+}
+.alert.success{background:rgba(120,200,152,.08);border-color:#78c898;color:#78c898}
+.alert.error{background:rgba(224,128,128,.08);border-color:#e08080;color:#e08080}
+@keyframes alin{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:none}}
+.alert-icon{font-size:1.1rem}
+
+.stats{display:flex;gap:16px;margin-bottom:36px;flex-wrap:wrap}
+.stat-blob{
+    flex:1;min-width:150px;
+    background:var(--glass);backdrop-filter:blur(16px);
+    border:1px solid var(--rim);border-radius:20px;
+    padding:22px 24px;
+}
+.stat-n{font-family:'Cormorant',serif;font-size:2.6rem;font-weight:400;color:var(--petal);line-height:1}
+.stat-l{font-size:.58rem;letter-spacing:3px;text-transform:uppercase;color:rgba(247,243,240,.35);margin-top:6px}
+
+.action-bar{
+    display:flex;align-items:center;justify-content:space-between;
+    margin-bottom:24px;flex-wrap:wrap;gap:14px;
+}
+.section-title{
+    font-family:'Cormorant',serif;
+    font-size:1.8rem;font-weight:400;color:var(--mist);
+}
+.section-title span{color:var(--rose);font-style:italic}
+
+.btn-pill{
+    display:inline-flex;align-items:center;gap:10px;
+    background:var(--rose);color:#fff;border:none;
+    padding:13px 28px;border-radius:100px;
+    font-family:'DM Sans',sans-serif;font-size:.72rem;
+    letter-spacing:2.5px;text-transform:uppercase;cursor:pointer;
+    transition:all .3s;box-shadow:0 12px 32px rgba(200,112,124,.3);
+}
+.btn-pill:hover{background:#a8505c;box-shadow:0 18px 40px rgba(200,112,124,.45);transform:translateY(-2px)}
+
+.search-wrap{position:relative}
+.search-input{
+    background:var(--glass);backdrop-filter:blur(12px);
+    border:1px solid var(--rim);border-radius:100px;
+    padding:10px 20px 10px 42px;color:var(--mist);
+    font-family:'DM Sans',sans-serif;font-size:.82rem;
+    width:240px;outline:none;transition:all .3s;
+}
+.search-input::placeholder{color:rgba(247,243,240,.3)}
+.search-input:focus{border-color:rgba(200,112,124,.5);width:280px}
+.search-icon{position:absolute;left:14px;top:50%;transform:translateY(-50%);font-size:.9rem;opacity:.4}
+
+.card-grid{
+    display:flex;flex-wrap:wrap;gap:16px;
+    overflow:auto;padding:8px 4px 16px;
+    align-content:flex-start;
+    width:100%;
+}
+.pcard{
+    width:240px;height:340px;flex-shrink:0;
+    background:var(--glass);
+    backdrop-filter:blur(16px);
+    border:1px solid var(--rim);
+    border-radius:20px;
+    overflow:hidden;
+    display:flex;flex-direction:column;
+    transition:transform .3s cubic-bezier(.22,.68,0,1.2),box-shadow .3s,border-color .3s;
+    position:relative;
+}
+.pcard:hover{
+    transform:translateY(-6px);
+    box-shadow:0 24px 48px rgba(0,0,0,.5);
+    border-color:rgba(200,112,124,.4);
+}
+.pcard-img{
+    height:140px;overflow:hidden;flex-shrink:0;
+    background:rgba(255,255,255,.03);
+    display:flex;align-items:center;justify-content:center;
+    cursor:zoom-in;
+}
+.pcard-img img{
+    width:100%;height:100%;object-fit:cover;
+    transition:transform .4s;
+}
+.pcard:hover .pcard-img img{transform:scale(1.1)}
+.pcard-noimg{
+    font-family:'Cormorant',serif;
+    font-size:1.6rem;color:rgba(255,255,255,.1);
+    letter-spacing:6px;
+}
+.pcard-body{
+    flex:1;padding:14px 16px 12px;
+    display:flex;flex-direction:column;gap:6px;
+}
+.pcard-brand{
+    font-size:.55rem;letter-spacing:4px;
+    text-transform:uppercase;color:var(--rose);
+}
+.pcard-name{
+    font-family:'Cormorant',serif;
+    font-size:1.15rem;font-weight:400;
+    color:var(--mist);line-height:1.15;
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.pcard-tags{display:flex;gap:4px;flex-wrap:wrap}
+.pcard-tags .tag{
+    font-size:.5rem;letter-spacing:1px;text-transform:uppercase;
+    padding:2px 10px;border-radius:100px;
+    border:1px solid rgba(255,255,255,.12);
+    color:rgba(247,243,240,.5);
+}
+.pcard-meta{
+    display:flex;justify-content:space-between;
+    font-size:.62rem;color:rgba(247,243,240,.35);
+    margin-top:auto;padding-top:6px;
+}
+.pcard-actions{
+    display:flex;gap:4px;margin-top:4px;
+    opacity:0;transition:opacity .25s;
+}
+.pcard:hover .pcard-actions{opacity:1}
+.pcard-actions .btn-ghost,.pcard-actions .btn-edit,.pcard-actions .btn-del{
+    padding:4px 10px;font-size:.6rem;
+}
+.empty-card{
+    width:100%;text-align:center;padding:60px;
+    font-family:'Cormorant',serif;font-size:1.2rem;
+    color:rgba(247,243,240,.2);font-style:italic;
+}
+
+.btn-ghost{
+    display:inline-flex;align-items:center;gap:6px;
+    background:transparent;border:1px solid rgba(255,255,255,.1);
+    color:rgba(247,243,240,.65);
+    padding:7px 16px;border-radius:100px;
+    font-family:'DM Sans',sans-serif;font-size:.68rem;
+    letter-spacing:1px;text-transform:uppercase;cursor:pointer;
+    transition:all .25s;
+}
+.btn-ghost:hover{background:rgba(255,255,255,.05);border-color:#fff;color:#fff}
+
+.btn-edit{
+    display:inline-flex;align-items:center;gap:6px;
+    background:rgba(255,255,255,.05);border:1px solid var(--rim);
+    color:rgba(247,243,240,.65);
+    padding:7px 16px;border-radius:100px;
+    font-family:'DM Sans',sans-serif;font-size:.68rem;
+    letter-spacing:1px;text-transform:uppercase;cursor:pointer;
+    transition:all .25s;
+}
+.btn-edit:hover{border-color:rgba(200,112,124,.5);color:var(--mist);background:rgba(200,112,124,.08)}
+
+.btn-del{
+    display:inline-flex;align-items:center;gap:6px;
+    background:rgba(224,128,128,.08);border:1px solid rgba(224,128,128,.25);
+    color:rgba(224,128,128,.7);
+    padding:7px 16px;border-radius:100px;
+    font-family:'DM Sans',sans-serif;font-size:.68rem;
+    letter-spacing:1px;text-transform:uppercase;cursor:pointer;
+    transition:all .25s;
+}
+.btn-del:hover{background:rgba(224,128,128,.2);border-color:#e08080;color:#e08080}
+
+.modal{
+    display:none;position:fixed;inset:0;z-index:1000;
+    background:rgba(0,0,0,.78);backdrop-filter:blur(8px);
+    animation:mfade .3s ease;
+    align-items:flex-start;justify-content:center;
+    overflow-y:auto;padding:40px 20px;
+}
+.modal.open{display:flex}
+@keyframes mfade{from{opacity:0}to{opacity:1}}
+
+.modal-box{
+    position:relative;
+    background:rgba(16,12,22,.92);
+    border:1px solid var(--rim);
+    border-radius:28px;
+    width:100%;max-width:600px;
+    overflow:hidden;
+    animation:mpop .35s cubic-bezier(.22,.68,0,1.2);
+}
+@keyframes mpop{from{transform:scale(.94) translateY(20px);opacity:0}to{transform:none;opacity:1}}
+
+.modal-photo-strip{
+    height:160px;overflow:hidden;position:relative;
+}
+.modal-photo-strip::before{
+    content:'';position:absolute;inset:0;
+    background:url('data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wCEAAkGBwgHBgkIBwgKCgkLDRYPDQwMDRsUFRAWIB0iIiAdHx8kKDQsJCYxJx8fLT0tMTU3Ojo6Iys/RD84QzQ5OjcBCgoKDQwNGg8PGjclHyU3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3N//AABEIAGAAwAMBIgACEQEDEQH/xAAbAAACAgMBAAAAAAAAAAAAAAAFBgMEAQIHAP/EAEEQAAIBAwMBBAYGCAQHAQAAAAECAwAEEQUSITEGE0FRImJxgZGhsQcUIzJCwdEzQ2Jy4fAVJIKSFjRTg5PS8QcINP/EABoBAQADAQEBAAAAAAAAAAAAAAABAgMEBQb/xAAfEQACAgIDAQEBAAAAAAAAAAAAAQIRAyEEEjEiQRP/2gAMAwEAAhEDEQA/AOjE1ivVjNZAzXjWpNYJoAwetXtEP1tvcNUCau6Ifrp9w/lQAU1T9Qk+FL23xph1P9Sk+HzodpwHfKaTGUMefHtrf0R+0Pvpizx0rBCnqqn4UgAOVWIysfQDBS3rPQVBZatYXwj+iXKyiTOwgHn8KIa/tWxOAADPDnAx40kf4aqr/wDDA6hh3b9fdNAQnu8jXt4HU0W+jwY5hT7q0a1g/wCyn3UBQLLDNZJGKJG0t/CIUA7TXj6Y0AtVUbwc7hmgEi7ZHFsnx+ZqyrcUkDXNQAwkiKPIIKOdmby4vYrhrqTeUYAcAeFFhRQv2zfXHvml3tdMY9NiJ+x3w3Hy4OKO3rfXJvfNLuraxp2bjT75VcLGXky3ohePEc55HFKTChZjvFaJsEBh455p/wCx2sHVtPIlO6aBtjt/qHgf78q5rqehta2y38F3HHazLuthI+XkB8hgE8c5wKYf8O5Lq0guJYoe/DuO/RC24DHo4GMev44rCftCok7SKWv7wn7QlOKX9AvGGryWoJKSKWx5EYoz2g1GOXUJnMctuWblbmMpj2np+NA7N7LRoZtReYTyzsUjRMcDPQfzp6YUdtJrG6taxkVUDYmsE1qWrBagDJNXtDP10+4fyocTV7Qzm+PuH8qADOo82cnw+dULAYlWiGofqj/D51Qs+JV9v5UmASqpf3y2ZjDBSXz9p9oGMePxq4QcdKF61GjopdQ2yNiM9PCsTbUbRuKt+g/tLe4stncTSMWWXbbr3jej4EevNLvYGzks7O0naK5zCpGySIJvB8QdxFM1kDcJuaRlbG30cdOR5eqpxbL3YLPKdoyPSx8q5nyfaoqsXgRtbv6SWUwyRkDPpYOfiPh99WCOKoaUxaPkkkqGJJz1/wDlXjXUnasi9mOlKPbgjvbT3W+YpuPSk/tx/nWw/cPzoYIVn5+zTN2RbFpcH98D8KWccUydlvRsp/8AyfkKENg+7fN1N75qq4t8M00UZQek25Aelb3T/ppffNUrjM1tPEucvGyjHmRSYjm+qalLql893MSAeI06BF8FAp1/wuhljTUL6U7YnKoCehK5JPwzQrTOw9y7o+pzpFH1McTZc+onoPxpw1SGOy7NvbWaiKIKsYA8FJ5/v11OMXdsQp9pLpdUvvqVxOiI7ZdG2h+f75oBexW2CCJDg5MmfSb8qYEtMq2OBilrW5BDIYEbLkc4/ZFNis7wXrG6o88VgEscKMk9AKuBuWrG6tvot0f+g49oxW62Fyf2APawoAgLUQ0A5vz7hqEabOepUVf0ixe2uu8d85UjpQAUv/1V/h86Vu08j2+iTTQsUkE9uoYdQC+CPiKZryWM27r3iZzjG4edK/azMmgzJErOxnt2wiljgPyePAUmMSrDU7+W511WvLjbDdukI7wgIoAwBXT70501CeT3HX7q5PpSv9N11djFnvXKqFJz7K6tdup0AAD6XdAEeR4qOR/LNx2VdIJ7onw/q1Xx/lkeqqWlL9X/AL8zRADg+yuBr...');
+    filter:brightness(.35) saturate(1.3);
+    background-size:cover;background-position:center;
+}
+.modal-photo-strip::after{
+    content:'';position:absolute;inset:0;
+    background:linear-gradient(to bottom,rgba(16,12,22,0) 0%,rgba(16,12,22,1) 100%);
+}
+.modal-strip-title{
+    position:absolute;bottom:20px;left:28px;z-index:2;
+    font-family:'Cormorant',serif;font-size:1.8rem;font-weight:400;
+    color:var(--petal);letter-spacing:2px;
+}
+.modal-x{
+    position:absolute;top:16px;right:20px;z-index:3;
+    background:rgba(10,8,16,.6);border:1px solid var(--rim);
+    border-radius:100px;width:34px;height:34px;
+    display:flex;align-items:center;justify-content:center;
+    cursor:pointer;font-size:16px;color:rgba(247,243,240,.5);
+    transition:all .3s;
+}
+.modal-x:hover{color:var(--mist);border-color:rgba(200,112,124,.4)}
+
+.modal-form{padding:6px 28px 32px}
+
+.fg{margin-bottom:20px}
+.fg label{
+    display:block;margin-bottom:7px;
+    font-size:.62rem;letter-spacing:3px;text-transform:uppercase;
+    color:var(--rose);
+}
+.fi{
+    width:100%;background:rgba(255,255,255,.04);
+    border:none;border-bottom:1px solid rgba(255,255,255,.12);
+    padding:10px 0;color:var(--mist);
+    font-family:'DM Sans',sans-serif;font-size:.88rem;font-weight:400;
+    outline:none;transition:border-color .3s;
+}
+.fi::placeholder{color:rgba(247,243,240,.22)}
+.fi:focus{border-color:var(--rose)}
+textarea.fi{resize:vertical;min-height:70px;padding:10px 0}
+.fi-file{
+    width:100%;padding:10px 0;
+    color:rgba(247,243,240,.5);
+    font-size:.8rem;cursor:pointer;
+    border-bottom:1px dashed rgba(255,255,255,.1);
+}
+.fi-file::-webkit-file-upload-button{
+    background:rgba(200,112,124,.15);border:1px solid rgba(200,112,124,.35);
+    color:var(--rose);padding:6px 16px;border-radius:100px;
+    font-family:'DM Sans',sans-serif;font-size:.68rem;letter-spacing:1px;
+    cursor:pointer;margin-right:10px;
+}
+
+.fg-row{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+
+.preview-wrap{margin-top:10px}
+.preview-wrap img{
+    width:80px;height:80px;object-fit:cover;
+    border-radius:14px;border:1px solid var(--rim);
+}
+.preview-label{font-size:.6rem;letter-spacing:2px;text-transform:uppercase;color:rgba(247,243,240,.3);margin-bottom:5px;display:block}
+
+.form-footer{margin-top:28px;padding-top:20px;border-top:1px solid rgba(255,255,255,.05)}
+
+.detail-modal-box{
+    position:relative;
+    background:rgba(16,12,22,.92);
+    border:1px solid var(--rim);
+    border-radius:28px;
+    width:100%;max-width:900px;
+    overflow:hidden;
+    animation:mpop .35s cubic-bezier(.22,.68,0,1.2);
+    display:grid;
+    grid-template-columns: 40% 60%;
+}
+
+@media(max-width: 900px){
+    .detail-modal-box{grid-template-columns: 1fr; max-height: 90vh; overflow-y: auto;}
+}
+
+.detail-img-box{
+    background:var(--ink);
+    position:relative;
+    min-height: 400px;
+}
+.detail-img-box img{
+    width:100%;height:100%;object-fit:cover;
+    display:block;
+}
+.detail-img-placeholder{
+    width:100%;height:100%;display:flex;align-items:center;justify-content:center;
+    color:rgba(255,255,255,0.1);font-size:4rem;font-family:'Cormorant',serif;
+}
+
+.detail-content-box{
+    padding:40px;
+    overflow-y:auto;
+}
+.detail-brand{
+    font-size:0.85rem;letter-spacing:3px;text-transform:uppercase;
+    color:var(--rose);margin-bottom:8px;display:block;
+}
+.detail-title{
+    font-family:'Cormorant',serif;font-size:2.5rem;font-weight:400;
+    color:var(--petal);margin-bottom:20px;line-height:1.1;
+}
+
+.detail-tags{margin-bottom:30px;display:flex;flex-wrap:wrap;gap:10px}
+.tag{
+    display:inline-flex;align-items:center;gap:6px;
+    background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);
+    padding:6px 14px;border-radius:100px;
+    font-size:.75rem;color:rgba(247,243,240,.7);
+}
+.tag i{font-size:0.8rem;color:var(--rose)}
+
+.detail-section{margin-bottom:30px}
+.section-label{
+    font-size:.65rem;letter-spacing:2px;text-transform:uppercase;
+    color:rgba(247,243,240,.4);margin-bottom:12px;display:block;
+}
+
+.pyramid-grid{
+    display:grid;grid-template-columns: repeat(3, 1fr);gap:15px;
+    background:rgba(0,0,0,.2);padding:20px;border-radius:16px;
+    border:1px solid rgba(255,255,255,.03);
+}
+.note-col h4{
+    font-size:0.75rem;color:rgba(255,255,255,.3);
+    text-transform:uppercase;letter-spacing:1.5px;
+    margin-bottom:10px;text-align:center;
+}
+.note-col p{
+    font-family:'Cormorant',serif;font-size:1.1rem;
+    color:var(--petal);text-align:center;line-height:1.4;
+}
+
+.meta-grid{
+    display:grid;grid-template-columns:1fr 1fr;gap:20px;
+}
+.meta-item span{
+    display:block;
+    font-size:0.75rem;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:1px;
+    margin-bottom:4px;
+}
+.meta-item p{
+    color:var(--mist);font-size:0.95rem;
+}
+#zoom.on{
+    display:flex;position:fixed;inset:0;z-index:2000;
+    background:rgba(0,0,0,.88);backdrop-filter:blur(12px);
+    align-items:center;justify-content:center;cursor:zoom-out;
+}
+#zoom img{
+    max-width:88%;max-height:88vh;
+    border-radius:18px;box-shadow:0 30px 80px rgba(0,0,0,.6);
+    animation:zpop .25s ease;
+}
+@keyframes zpop{from{transform:scale(.9)}to{transform:scale(1)}}
+
+#delConfirmModal .modal-box{max-width:420px;text-align:center;padding:40px 32px}
+#delConfirmModal .del-icon{font-size:2.5rem;margin-bottom:12px}
+#delConfirmModal h3{font-family:'Cormorant',serif;font-size:1.4rem;font-weight:300;color:var(--petal);margin-bottom:6px}
+#delConfirmModal p{font-size:.8rem;color:rgba(247,243,240,.5);margin-bottom:28px}
+.del-actions{display:flex;gap:12px;justify-content:center}
+.del-actions .btn-ghost{min-width:100px;justify-content:center}
+.del-actions .btn-del{padding:9px 24px;min-width:100px;justify-content:center}
+
+@media(max-width:768px){
+    .main{padding:28px 20px 50px}
+    .fg-row{grid-template-columns:1fr}
+    .hdr-left{gap:8px}
+    .hdr-logo{font-size:1.2rem}
+    .detail-content-box{padding:25px;}
+}
+@media (hover:none) and (pointer:coarse), (max-width:600px){
+    #cur,#cur2{display:none !important}
+    body{cursor:auto}
+}
+@media(max-width:480px){
+    .main{padding:20px 12px 40px}
+    .hdr-logo{font-size:1rem;letter-spacing:6px}
+    .hdr-right{gap:6px}
+    .back-link{padding:5px 10px;font-size:.55rem;letter-spacing:1px}
+    .hdr-badge{display:none}
+    .pcard{width:100%;height:auto;min-height:280px}
+    .pcard-img{height:120px}
+    .pcard-actions{opacity:1}
+    .stats{flex-direction:column;gap:12px}
+    .stat-blob{padding:14px 18px}
+    .stat-n{font-size:2rem}
+    .action-bar{flex-direction:column;align-items:stretch}
+    .search-input{width:100%;font-size:.75rem}
+    .section-title{font-size:1.3rem}
+    .btn-pill{width:100%;justify-content:center;padding:11px 20px;font-size:.65rem}
+    .pyramid-grid{grid-template-columns:1fr;gap:10px;padding:14px}
+    .meta-grid{grid-template-columns:1fr;gap:12px}
+    .detail-content-box{padding:20px}
+    .detail-title{font-size:1.8rem}
+    .modal-box{margin:0;border-radius:20px}
+    .modal-form{padding:4px 16px 24px}
+    .fg{margin-bottom:14px}
+    .fg-row{gap:12px}
+}
+@media(max-width:480px){
+    .login-box{padding:32px 24px;width:100%;max-width:95vw}
+    .login-logo{font-size:1.6rem;letter-spacing:8px}
+    .login-sub{font-size:.5rem;letter-spacing:3px;margin-bottom:24px}
+    .login-input{padding:10px 0;font-size:.9rem}
+    .login-btn{padding:12px;font-size:.7rem}
+}
+</style>
+</head>
+<body>
+
+<div id="cur"></div>
+<div id="cur2"></div>
+<div id="page-bg"></div>
+<div id="page-grad"></div>
+
+<div id="loginPage" class="active">
+    <div class="login-box">
+        <div class="login-logo">L'ORE-AI</div>
+        <div class="login-sub">Admin Access</div>
+        <div onsubmit="return false">
+            <label class="login-label">Password</label>
+            <input type="password" id="loginPass" class="login-input" placeholder="Enter admin password" autofocus>
+            <button class="login-btn" onclick="handleLogin()">→ Unlock</button>
+        </div>
+        <div class="login-error" id="loginError" style="display:none"></div>
+    </div>
+</div>
+
+<div id="dashboardPage">
+<div class="page">
+    <header id="hdr">
+        <div class="hdr-left">
+            <span class="hdr-logo">L'ORE-AI</span>
+            <span class="hdr-badge">Admin</span>
+        </div>
+        <div class="hdr-right">
+            <a href="../" class="back-link">← Back to App</a>
+            <button class="back-link" style="color:#e08080" onclick="handleLogout()">Logout</button>
+        </div>
+    </header>
+    <main class="main">
+        <div id="alertBox" class="alert" style="display:none">
+            <span class="alert-icon" id="alertIcon">✓</span>
+            <span id="alertMsg"></span>
+        </div>
+        <div class="stats">
+            <div class="stat-blob">
+                <div class="stat-n" id="statTotal">0</div>
+                <div class="stat-l">Total Perfumes</div>
+            </div>
+            <div class="stat-blob">
+                <div class="stat-n" id="statBrands">0</div>
+                <div class="stat-l">Brands</div>
+            </div>
+            <div class="stat-blob">
+                <div class="stat-n" id="statFamilies">0</div>
+                <div class="stat-l">Families</div>
+            </div>
+        </div>
+        <div class="action-bar">
+            <div class="section-title">Inventory <span>Collection</span></div>
+            <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap">
+                <div class="search-wrap">
+                    <span class="search-icon">⌕</span>
+                    <input type="text" class="search-input" id="searchInput" placeholder="Search perfumes...">
+                </div>
+                <button class="btn-pill" onclick="openAddModal()">+ Add Perfume</button>
+            </div>
+        </div>
+        <div class="card-grid" id="cardGrid">
+            <div class="empty-card">No fragrances found — add one to start.</div>
+        </div>
+    </main>
+</div>
+</div>
+
+<div id="modal" class="modal" onclick="handleModalOutsideClick(event)">
+    <div class="modal-box" onclick="event.stopPropagation()">
+        <div class="modal-photo-strip">
+            <div class="modal-strip-title" id="modalTitle">Add Perfume</div>
+            <button class="modal-x" onclick="closeModal()">×</button>
+        </div>
+        <div class="modal-form">
+            <div onsubmit="return false">
+                <div class="fg-row" style="margin-top:4px">
+                    <div class="fg">
+                        <label>Brand</label>
+                        <input type="text" id="formBrand" class="fi" required placeholder="e.g. Dior">
+                    </div>
+                    <div class="fg">
+                        <label>Name</label>
+                        <input type="text" id="formName" class="fi" required placeholder="e.g. Sauvage">
+                    </div>
+                </div>
+                <div class="fg">
+                    <label>Image Upload (Optional)</label>
+                    <input type="file" id="formImage" class="fi fi-file" accept="image/*" onchange="previewImg(this)">
+                    <div id="imgPreviewWrap" class="preview-wrap" style="display:none">
+                        <span class="preview-label">Current Image</span>
+                        <img id="imgPreview" src="">
+                    </div>
+                </div>
+                <div class="fg-row">
+                    <div class="fg">
+                        <label>Scent Family</label>
+                        <input type="text" id="formFamily" class="fi" placeholder="e.g. Woody Aromatic">
+                    </div>
+                    <div class="fg">
+                        <label>Best Occasion</label>
+                        <input type="text" id="formOccasion" class="fi" placeholder="e.g. Date, Work">
+                    </div>
+                </div>
+                <div class="fg-row">
+                    <div class="fg">
+                        <label>Mood</label>
+                        <input type="text" id="formMood" class="fi" placeholder="e.g. Confident">
+                    </div>
+                    <div class="fg">
+                        <label>Longevity</label>
+                        <input type="text" id="formLongevity" class="fi" placeholder="e.g. 8-10 Hours">
+                    </div>
+                </div>
+                <div class="fg">
+                    <label>Top Notes</label>
+                    <textarea id="formTop" class="fi" placeholder="Bergamot, Pepper..."></textarea>
+                </div>
+                <div class="fg">
+                    <label>Middle Notes</label>
+                    <textarea id="formMid" class="fi" placeholder="Lavender, Sichuan Pepper..."></textarea>
+                </div>
+                <div class="fg">
+                    <label>Base Notes</label>
+                    <textarea id="formBase" class="fi" placeholder="Ambroxan, Cedar..."></textarea>
+                </div>
+                <div class="form-footer">
+                    <button class="btn-pill" style="width:100%;justify-content:center" onclick="submitForm()">Save Fragrance</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="detailModal" class="modal" onclick="handleDetailOutsideClick(event)">
+    <div class="detail-modal-box" onclick="event.stopPropagation()">
+        <div class="detail-img-box">
+            <img id="d-img" src="" alt="Fragrance">
+            <div class="detail-img-placeholder" id="d-ph" style="display:none">L'ORE</div>
+            <button class="modal-x" style="top:20px;right:20px;" onclick="closeDetailModal()">×</button>
+        </div>
+        <div class="detail-content-box">
+            <span id="d-brand" class="detail-brand">Brand Name</span>
+            <h2 id="d-name" class="detail-title">Perfume Name</h2>
+            <div class="detail-tags" id="d-tags"></div>
+            <div class="detail-section">
+                <span class="section-label">Scent Pyramid</span>
+                <div class="pyramid-grid">
+                    <div class="note-col">
+                        <h4>Top</h4>
+                        <p id="d-top">-</p>
+                    </div>
+                    <div class="note-col">
+                        <h4>Middle</h4>
+                        <p id="d-mid">-</p>
+                    </div>
+                    <div class="note-col">
+                        <h4>Base</h4>
+                        <p id="d-base">-</p>
+                    </div>
+                </div>
+            </div>
+            <div class="detail-section">
+                <span class="section-label">Profile</span>
+                <div class="meta-grid">
+                    <div class="meta-item">
+                        <span>Family</span>
+                        <p id="d-family">-</p>
+                    </div>
+                    <div class="meta-item">
+                        <span>Occasion</span>
+                        <p id="d-occasion">-</p>
+                    </div>
+                    <div class="meta-item">
+                        <span>Mood</span>
+                        <p id="d-mood">-</p>
+                    </div>
+                    <div class="meta-item">
+                        <span>Longevity</span>
+                        <p id="d-longevity">-</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="delConfirmModal" class="modal" onclick="if(event.target===this)closeDelConfirm()">
+    <div class="modal-box" onclick="event.stopPropagation()">
+        <div class="del-icon">✕</div>
+        <h3>Delete Fragrance?</h3>
+        <p>This action cannot be undone.</p>
+        <div class="del-actions">
+            <button class="btn-ghost" onclick="closeDelConfirm()">Cancel</button>
+            <button class="btn-del" id="delConfirmBtn" onclick="confirmDelete()">Delete</button>
+        </div>
+    </div>
+</div>
+
+<div id="zoom" onclick="closeZoom()">
+    <img id="zoom-img" src="" onclick="event.stopPropagation()">
+</div>
+
+<script>
+const API_BASE = '../api';
+let perfumes = [];
+let editingId = null;
+let deletingId = null;
+
+const cur=document.getElementById('cur'),cur2=document.getElementById('cur2');
+let mx=0,my=0,cx=0,cy=0;
+document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;cur.style.left=mx+'px';cur.style.top=my+'px'});
+(function lp(){cx+=(mx-cx)*.16;cy+=(my-cy)*.16;cur2.style.left=cx+'px';cur2.style.top=cy+'px';requestAnimationFrame(lp)})();
+
+function showAlert(msg, type){
+    const box=document.getElementById('alertBox');
+    document.getElementById('alertIcon').textContent=type==='success'?'✓':'✕';
+    document.getElementById('alertMsg').textContent=msg;
+    box.className='alert '+type;
+    box.style.display='flex';
+    setTimeout(()=>{box.style.display='none'},4000);
+}
+
+async function apiFetch(path, opts){
+    const token=localStorage.getItem('admin_token');
+    const headers=opts&&opts.noJson?{}:{'Accept':'application/json'};
+    if(token&&!opts?.noAuth) headers['Authorization']='Bearer '+token;
+    const res=await fetch(API_BASE+path,{...opts,headers:{...headers,...opts?.headers}});
+    if(res.status===401){
+        localStorage.removeItem('admin_token');
+        showLogin();
+        return null;
+    }
+    if(opts&&opts.noJson) return res;
+    return res.json();
+}
+
+function showLogin(){
+    document.getElementById('loginPage').classList.add('active');
+    document.getElementById('dashboardPage').classList.remove('active');
+    document.getElementById('loginError').style.display='none';
+}
+
+function showDashboard(){
+    document.getElementById('loginPage').classList.remove('active');
+    document.getElementById('dashboardPage').classList.add('active');
+}
+
+async function handleLogin(){
+    const pass=document.getElementById('loginPass').value;
+    const errEl=document.getElementById('loginError');
+    if(!pass){errEl.textContent='✕ Password required';errEl.style.display='block';return}
+    const data=await apiFetch('/admin/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({password:pass}),noAuth:true});
+    if(!data) return;
+    if(data.token){
+        localStorage.setItem('admin_token',data.token);
+        errEl.style.display='none';
+        await loadDashboard();
+    }else{
+        errEl.textContent='✕ '+(data.error||'Invalid password');
+        errEl.style.display='block';
+    }
+}
+
+async function loadDashboard(){
+    showDashboard();
+    const data=await apiFetch('/admin/perfumes');
+    if(!data) return;
+    perfumes=data.perfumes||[];
+    renderStats();
+    renderCards();
+}
+
+function renderStats(){
+    const total=perfumes.length;
+    const brands=new Set(perfumes.map(p=>p.brand).filter(Boolean));
+    const families=new Set(perfumes.map(p=>p.scent_family).filter(Boolean));
+    document.getElementById('statTotal').textContent=total;
+    document.getElementById('statBrands').textContent=brands.size;
+    document.getElementById('statFamilies').textContent=families.size;
+}
+
+function renderCards(filter){
+    const grid=document.getElementById('cardGrid');
+    const q=(filter||'').toLowerCase();
+    const filtered=q?perfumes.filter(p=>(p.brand+' '+p.name+' '+p.scent_family+' '+p.best_occasion+' '+p.mood).toLowerCase().includes(q)):perfumes;
+    if(filtered.length===0){
+        grid.innerHTML='<div class="empty-card">No fragrances found — add one to start.</div>';
+        return;
+    }
+    grid.innerHTML=filtered.map(p=>`<div class="pcard">
+        <div class="pcard-img" onclick="openZoom('${escAttr(absUrl(p.image_url||''))}')">
+            ${p.image_url?`<img src="${escAttr(absUrl(p.image_url))}" alt="">`:'<div class="pcard-noimg">L\'ORE</div>'}
+        </div>
+        <div class="pcard-body">
+            <div class="pcard-brand">${escHtml(p.brand||'')}</div>
+            <div class="pcard-name">${escHtml(p.name||'')}</div>
+            <div class="pcard-tags">
+                <span class="tag">${escHtml(p.scent_family||'')}</span>
+                <span class="tag">${escHtml(p.best_occasion||'')}</span>
+            </div>
+            <div class="pcard-meta">
+                <span>Mood: ${escHtml(p.mood||'-')}</span>
+                <span>⏱ ${escHtml(p.longevity||'-')}</span>
+            </div>
+            <div class="pcard-actions">
+                <button class="btn-ghost" onclick="viewItem(${p.id})">👁 View</button>
+                <button class="btn-edit" onclick="openEditModal(${p.id})">✎ Edit</button>
+                <button class="btn-del" onclick="openDelConfirm(${p.id})">✕</button>
+            </div>
+        </div>
+    </div>`).join('');
+}
+
+function escHtml(s){
+    const d=document.createElement('div');
+    d.textContent=s;
+    return d.innerHTML;
+}
+
+function escAttr(s){
+    return s.replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/'/g,'&#39;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+function absUrl(path){
+    if(!path||path.startsWith('http://')||path.startsWith('https://')||path.startsWith('/'))return path;
+    return '/'+path;
+}
+
+document.getElementById('searchInput').addEventListener('input',function(){
+    renderCards(this.value);
+});
+
+function openAddModal(){
+    editingId=null;
+    document.getElementById('modalTitle').textContent='Add Perfume';
+    document.getElementById('formBrand').value='';
+    document.getElementById('formName').value='';
+    document.getElementById('formFamily').value='';
+    document.getElementById('formOccasion').value='';
+    document.getElementById('formMood').value='';
+    document.getElementById('formLongevity').value='';
+    document.getElementById('formTop').value='';
+    document.getElementById('formMid').value='';
+    document.getElementById('formBase').value='';
+    document.getElementById('formImage').value='';
+    document.getElementById('imgPreviewWrap').style.display='none';
+    document.getElementById('modal').classList.add('open');
+}
+
+function openEditModal(id){
+    const p=perfumes.find(x=>x.id===id);
+    if(!p) return;
+    editingId=id;
+    document.getElementById('modalTitle').textContent='Edit Perfume';
+    document.getElementById('formBrand').value=p.brand||'';
+    document.getElementById('formName').value=p.name||'';
+    document.getElementById('formFamily').value=p.scent_family||'';
+    document.getElementById('formOccasion').value=p.best_occasion||'';
+    document.getElementById('formMood').value=p.mood||'';
+    document.getElementById('formLongevity').value=p.longevity||'';
+    document.getElementById('formTop').value=p.top_notes||'';
+    document.getElementById('formMid').value=p.middle_notes||'';
+    document.getElementById('formBase').value=p.base_notes||'';
+    document.getElementById('formImage').value='';
+    const wrap=document.getElementById('imgPreviewWrap');
+    const prev=document.getElementById('imgPreview');
+    if(p.image_url){prev.src=absUrl(p.image_url);wrap.style.display='block'}
+    else{wrap.style.display='none'}
+    document.getElementById('modal').classList.add('open');
+}
+
+function closeModal(){document.getElementById('modal').classList.remove('open')}
+function handleModalOutsideClick(e){if(e.target===document.getElementById('modal'))closeModal()}
+
+function previewImg(input){
+    if(input.files&&input.files[0]){
+        const reader=new FileReader();
+        reader.onload=e=>{
+            document.getElementById('imgPreview').src=e.target.result;
+            document.getElementById('imgPreviewWrap').style.display='block';
+        };
+        reader.readAsDataURL(input.files[0]);
+    }
+}
+
+async function submitForm(){
+    const brand=document.getElementById('formBrand').value.trim();
+    const name=document.getElementById('formName').value.trim();
+    if(!brand||!name){showAlert('Brand and Name are required','error');return}
+    const fd=new FormData();
+    fd.append('brand',brand);
+    fd.append('name',name);
+    fd.append('scent_family',document.getElementById('formFamily').value.trim());
+    fd.append('best_occasion',document.getElementById('formOccasion').value.trim());
+    fd.append('mood',document.getElementById('formMood').value.trim());
+    fd.append('longevity',document.getElementById('formLongevity').value.trim());
+    fd.append('top_notes',document.getElementById('formTop').value.trim());
+    fd.append('middle_notes',document.getElementById('formMid').value.trim());
+    fd.append('base_notes',document.getElementById('formBase').value.trim());
+    const fileInput=document.getElementById('formImage');
+    if(fileInput.files&&fileInput.files[0]) fd.append('image',fileInput.files[0]);
+    const token=localStorage.getItem('admin_token');
+    const url=editingId?API_BASE+'/admin/perfumes/'+editingId:API_BASE+'/admin/perfumes';
+    const method=editingId?'PUT':'POST';
+    let res;
+    if(editingId){
+        res=await fetch(url,{
+            method:'PUT',
+            headers:{'Authorization':'Bearer '+token},
+            body:fd
+        });
+    }else{
+        res=await fetch(url,{
+            method:'POST',
+            headers:{'Authorization':'Bearer '+token},
+            body:fd
+        });
+    }
+    if(res.status===401){localStorage.removeItem('admin_token');showLogin();return}
+    const data=await res.json();
+    if(data.ok){
+        closeModal();
+        showAlert(editingId?'Perfume updated successfully!':'Perfume added successfully!','success');
+        await loadDashboard();
+    }else{
+        showAlert(data.error||'Operation failed','error');
+    }
+}
+
+function openDelConfirm(id){
+    deletingId=id;
+    document.getElementById('delConfirmModal').classList.add('open');
+}
+
+function closeDelConfirm(){
+    deletingId=null;
+    document.getElementById('delConfirmModal').classList.remove('open');
+}
+
+async function confirmDelete(){
+    if(!deletingId) return;
+    closeDelConfirm();
+    const data=await apiFetch('/admin/perfumes/'+deletingId,{method:'DELETE'});
+    if(!data) return;
+    if(data.ok){
+        showAlert('Perfume deleted successfully!','error');
+        await loadDashboard();
+    }else{
+        showAlert(data.error||'Delete failed','error');
+    }
+    deletingId=null;
+}
+
+function viewItem(id){
+    const p=perfumes.find(x=>x.id===id);
+    if(!p) return;
+    const img=document.getElementById('d-img');
+    const ph=document.getElementById('d-ph');
+    if(p.image_url&&p.image_url.trim()!==''){
+        img.src=absUrl(p.image_url);
+        img.style.display='block';
+        ph.style.display='none';
+    }else{
+        img.style.display='none';
+        ph.style.display='flex';
+    }
+    document.getElementById('d-brand').textContent=p.brand||'Unknown Brand';
+    document.getElementById('d-name').textContent=p.name||'No Name';
+    const tc=document.getElementById('d-tags');
+    tc.innerHTML='';
+    [p.scent_family,p.mood,p.best_occasion].filter(Boolean).forEach(t=>{
+        const s=document.createElement('span');s.className='tag';s.textContent=t;tc.appendChild(s);
+    });
+    document.getElementById('d-top').textContent=p.top_notes||'-';
+    document.getElementById('d-mid').textContent=p.middle_notes||'-';
+    document.getElementById('d-base').textContent=p.base_notes||'-';
+    document.getElementById('d-family').textContent=p.scent_family||'-';
+    document.getElementById('d-occasion').textContent=p.best_occasion||'-';
+    document.getElementById('d-mood').textContent=p.mood||'-';
+    document.getElementById('d-longevity').textContent=p.longevity||'-';
+    document.getElementById('detailModal').classList.add('open');
+}
+
+function closeDetailModal(){document.getElementById('detailModal').classList.remove('open')}
+function handleDetailOutsideClick(e){if(e.target===document.getElementById('detailModal'))closeDetailModal()}
+
+function openZoom(src){
+    if(!src) return;
+    document.getElementById('zoom-img').src=src;
+    document.getElementById('zoom').classList.add('on');
+}
+function closeZoom(){document.getElementById('zoom').classList.remove('on')}
+
+function handleLogout(){
+    localStorage.removeItem('admin_token');
+    showLogin();
+}
+
+document.getElementById('loginPass').addEventListener('keydown',e=>{if(e.key==='Enter')handleLogin()});
+
+document.addEventListener('keydown',e=>{
+    if(e.key==='Escape'){
+        closeModal();
+        closeDetailModal();
+        closeZoom();
+        closeDelConfirm();
+    }
+});
+
+(async function init(){
+    const token=localStorage.getItem('admin_token');
+    if(token){
+        const data=await apiFetch('/admin/perfumes');
+        if(data){
+            perfumes=data.perfumes||[];
+            renderStats();
+            renderCards();
+            showDashboard();
+        }
+    }
+})();
+</script>
+</body>
+</html>
