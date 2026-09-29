@@ -182,3 +182,36 @@ def _diag() -> dict[str, Any]:
         info["model_call"] = f"{type(exc).__name__}: {exc}"
         info["trace"] = traceback.format_exc()[-600:]
     return info
+
+
+@app.get("/api/_diag2")
+def _diag2(query: str = "date night") -> dict[str, Any]:
+    """Temporary: run the full chat path and report exactly where it breaks."""
+    import traceback
+
+    from lib.catalogue import SYSTEM_PROMPT as SP
+    from lib.catalogue import build_selection_prompt as BSP
+
+    steps: dict[str, Any] = {}
+    try:
+        steps["catalogue_size"] = len(CATALOGUE)
+        prompt = BSP(CATALOGUE, query)
+        steps["prompt_len"] = len(prompt)
+        client = _client()
+        steps["client"] = "ok"
+        raw = client.complete(
+            [ChatMessage("system", SP), ChatMessage("user", prompt)],
+            temperature=0.6,
+            max_tokens=900,
+        )
+        steps["raw_len"] = len(raw)
+        steps["raw_head"] = raw[:150]
+        selection = parse_selection(raw)
+        steps["parsed_keys"] = list(selection.keys())
+        steps["hydrated"] = len(
+            hydrate(selection.get("recommendations", []), CATALOGUE)
+        )
+    except Exception as exc:  # noqa: BLE001
+        steps["error"] = f"{type(exc).__name__}: {exc}"
+        steps["trace"] = traceback.format_exc()[-900:]
+    return steps
