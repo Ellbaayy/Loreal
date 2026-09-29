@@ -158,3 +158,27 @@ def shop_info() -> dict[str, Any]:
     provider here when one is chosen.
     """
     return {"available": False, "shops": [], "note": "No retailer provider configured."}
+
+
+@app.get("/api/_diag")
+def _diag() -> dict[str, Any]:
+    """Temporary: report what the runtime sees when calling the model."""
+    import os, traceback
+    info: dict[str, Any] = {
+        "key_present": bool(os.environ.get("KENARI_API_KEY")),
+        "key_len": len(os.environ.get("KENARI_API_KEY", "")),
+        "key_prefix": os.environ.get("KENARI_API_KEY", "")[:3],
+        "model_env": os.environ.get("LORE_MODEL"),
+        "base_env": os.environ.get("KENARI_BASE_URL"),
+    }
+    try:
+        from lib.llm import ChatMessage as CM, KenariClient as KC, LLMConfig as LC
+
+        client = KC(LC.from_env())
+        out = client.complete([CM("user", "say hi in 2 words")], max_tokens=20)
+        info["model_call"] = "ok"
+        info["model_reply"] = out[:80]
+    except Exception as exc:  # noqa: BLE001
+        info["model_call"] = f"{type(exc).__name__}: {exc}"
+        info["trace"] = traceback.format_exc()[-600:]
+    return info
