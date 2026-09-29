@@ -1,7 +1,7 @@
 import { Hono } from 'hono';
 import { query, execute } from '../db';
 import { callLLM, transcribeAudio, callVision } from '../llm';
-import { uploadToImgbb } from '../imgbb';
+import { uploadMedia } from '../storage';
 import { getPerfumeDatabase, type Perfume, type ChatSession, type AiResponse } from '../types';
 
 const chat = new Hono();
@@ -279,8 +279,8 @@ chat.post('/chat/with-image', async (c) => {
   const ext = imageFile.name.split('.').pop() || 'jpg';
   const filename = Date.now() + '_' + Math.random().toString(36).slice(2, 8) + '.' + ext;
 
-  const imgbbUrl = await uploadToImgbb(buffer, filename);
-  const imageUrl = imgbbUrl || '';
+  const mediaUrl = await uploadMedia(buffer, filename);
+  const imageUrl = mediaUrl || '';
 
   const base64 = Buffer.from(buffer).toString('base64');
 

@@ -1,6 +1,6 @@
 import { Hono } from 'hono';
 import { query, execute } from '../db';
-import { uploadToImgbb } from '../imgbb';
+import { uploadMedia } from '../storage';
 import type { Perfume } from '../types';
 
 const admin = new Hono();
@@ -50,8 +50,8 @@ admin.post('/admin/perfumes', async (c) => {
     const ext = imageFile.name.split('.').pop()?.toLowerCase() || 'jpg';
     const allowed = ['jpg', 'jpeg', 'png', 'webp'];
     if (allowed.includes(ext)) {
-      const imgbbUrl = await uploadToImgbb(imageFile, imageFile.name);
-      if (imgbbUrl) image_url = imgbbUrl;
+      const mediaUrl = await uploadMedia(imageFile, imageFile.name);
+      if (mediaUrl) image_url = mediaUrl;
     } else {
       return c.json({ error: 'Format file tidak diizinkan (Hanya JPG, JPEG, PNG, WEBP).' }, 400);
     }
@@ -85,8 +85,8 @@ admin.put('/admin/perfumes/:id', async (c) => {
     const ext = imageFile.name.split('.').pop()?.toLowerCase() || 'jpg';
     const allowed = ['jpg', 'jpeg', 'png', 'webp'];
     if (allowed.includes(ext)) {
-      const imgbbUrl = await uploadToImgbb(imageFile, imageFile.name);
-      if (imgbbUrl) image_url = imgbbUrl;
+      const mediaUrl = await uploadMedia(imageFile, imageFile.name);
+      if (mediaUrl) image_url = mediaUrl;
     } else {
       return c.json({ error: 'Format file tidak diizinkan (Hanya JPG, JPEG, PNG, WEBP).' }, 400);
     }
