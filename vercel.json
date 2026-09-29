@@ -1,13 +1,12 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
+  "builds": [{ "src": "api/*.py", "use": "@vercel/python" }],
+  "routes": [
+    { "src": "/api/chat/stream", "dest": "/api/chat_stream.py" },
+    { "src": "/api/shop-info", "dest": "/api/shop_info.py" },
+    { "src": "/api/(.*)", "dest": "/api/$1.py" }
+  ],
   "functions": {
-    "api/**/*.py": {
-      "maxDuration": 60,
-      "memory": 512
-    }
-  },
-  "rewrites": [
-    { "source": "/api/chat/stream", "destination": "/api/chat_stream" },
-    { "source": "/api/shop-info", "destination": "/api/shop_info" }
-  ]
+    "api/*.py": { "maxDuration": 60 }
+  }
 }

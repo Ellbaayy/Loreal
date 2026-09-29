@@ -69,7 +69,7 @@ For real token-by-token streaming, or to run locally:
 
 ```bash
 python3 -m venv .venv && source .venv/bin/activate
-pip install -r requirements.txt
+pip install -r app/requirements.txt
 cp .env.example .env      # then fill in KENARI_API_KEY
 set -a; source .env; set +a
 uvicorn app.main:app --reload
