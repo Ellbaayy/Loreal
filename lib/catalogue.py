@@ -1,4 +1,9 @@
-"""Fragrance catalogue and the domain logic that builds model prompts from it."""
+"""Fragrance catalogue and the domain logic that builds model prompts from it.
+
+Shared by both entry points: the Vercel serverless functions in `api/` and the
+FastAPI app in `app/`. Framework-free on purpose, so neither deployment target
+forces a dependency on the other.
+"""
 
 from __future__ import annotations
 

@@ -1,0 +1,13 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "functions": {
+    "api/**/*.py": {
+      "maxDuration": 60,
+      "memory": 512
+    }
+  },
+  "rewrites": [
+    { "source": "/api/chat/stream", "destination": "/api/chat_stream" },
+    { "source": "/api/shop-info", "destination": "/api/shop_info" }
+  ]
+}
