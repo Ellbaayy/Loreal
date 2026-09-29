@@ -1,2 +1,13 @@
+[project]
+name = "lore-ai"
+version = "2.0.0"
+description = "AI fragrance concierge"
+requires-python = ">=3.12"
+dependencies = [
+    "fastapi==0.121.1",
+    "uvicorn[standard]==0.38.0",
+    "pydantic==2.13.0",
+]
+
 [tool.vercel]
 entrypoint = "app.main:app"
