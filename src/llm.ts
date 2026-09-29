@@ -198,14 +198,14 @@ export async function transcribeAudio(audioBuffer: ArrayBuffer, mimeType: string
   }
 }
 
-export async function callVision(text: string, imageBase64: string, systemPrompt = '', timeout = 30000): Promise<string | null> {
+export async function callVision(text: string, imageBase64: string, mimeType = 'image/jpeg', systemPrompt = '', timeout = 30000): Promise<string | null> {
   const messages: any[] = [];
   if (systemPrompt) messages.push({ role: 'system', content: systemPrompt });
   messages.push({
     role: 'user',
     content: [
       { type: 'text', text },
-      { type: 'image_url', image_url: { url: `data:image/jpeg;base64,${imageBase64}` } },
+      { type: 'image_url', image_url: { url: `data:${mimeType};base64,${imageBase64}` } },
     ],
   });
 

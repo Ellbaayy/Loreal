@@ -288,7 +288,7 @@ chat.post('/chat/with-image', async (c) => {
     ? 'Analyze this perfume-related image. The user says: "' + textMessage + '". Describe what you see and identify the perfume if possible.'
     : 'Analyze this perfume-related image. Describe the perfume bottle, branding, and any visible details. Identify the perfume if possible.';
 
-  const visionResult = await callVision(visionPrompt, base64);
+  const visionResult = await callVision(visionPrompt, base64, imageFile.type || 'image/jpeg');
 
   const userContent = textMessage || 'Lihat gambar ini';
   const messages = [{ role: 'user', content: userContent }];
