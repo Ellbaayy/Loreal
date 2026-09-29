@@ -69,8 +69,13 @@ def catalogue() -> JSONResponse:
 
 
 @app.post("/api/chat")
-async def chat(request: ChatRequest) -> JSONResponse:
-    """Non-streaming reply: returns the conversational text plus structured picks."""
+def chat(request: ChatRequest) -> JSONResponse:
+    """Non-streaming reply: returns the conversational text plus structured picks.
+
+    Deliberately a sync `def`, not `async def`. The model client uses blocking
+    urllib, and a blocking call inside an async handler stalls the event loop;
+    declared sync, FastAPI runs it on the threadpool instead.
+    """
     client = _client()
 
     messages = [ChatMessage("system", SYSTEM_PROMPT)]
@@ -101,8 +106,12 @@ async def chat(request: ChatRequest) -> JSONResponse:
 
 
 @app.post("/api/chat/stream")
-async def chat_stream(request: ChatRequest) -> StreamingResponse:
-    """Token-by-token reply for the conversational transcript."""
+def chat_stream(request: ChatRequest) -> StreamingResponse:
+    """Token-by-token reply for the conversational transcript.
+
+    Sync for the same reason as `chat`, and the generator is handed to
+    StreamingResponse which iterates it off the event loop.
+    """
     client = _client()
 
     messages = [ChatMessage("system", SYSTEM_PROMPT)]
@@ -118,9 +127,14 @@ async def chat_stream(request: ChatRequest) -> StreamingResponse:
                 reasoning_effort=request.reasoning_effort,
             ):
                 yield f"data: {json.dumps({'delta': delta})}\n\n"
-        except LLMError as exc:
-            logger.warning("stream failed: %s", exc)
-            yield f"data: {json.dumps({'error': str(exc)})}\n\n"
+        except Exception as exc:  # noqa: BLE001 - never kill the stream mid-flight
+            if isinstance(exc, LLMError):
+                logger.warning("stream failed: %s", exc)
+                message = str(exc)
+            else:
+                logger.exception("stream crashed")
+                message = f"{type(exc).__name__}: {exc}"
+            yield f"data: {json.dumps({'error': message})}\n\n"
         yield "data: [DONE]\n\n"
 
     return StreamingResponse(
@@ -158,60 +172,3 @@ def shop_info() -> dict[str, Any]:
     provider here when one is chosen.
     """
     return {"available": False, "shops": [], "note": "No retailer provider configured."}
-
-
-@app.get("/api/_diag")
-def _diag() -> dict[str, Any]:
-    """Temporary: report what the runtime sees when calling the model."""
-    import os, traceback
-    info: dict[str, Any] = {
-        "key_present": bool(os.environ.get("KENARI_API_KEY")),
-        "key_len": len(os.environ.get("KENARI_API_KEY", "")),
-        "key_prefix": os.environ.get("KENARI_API_KEY", "")[:3],
-        "model_env": os.environ.get("LORE_MODEL"),
-        "base_env": os.environ.get("KENARI_BASE_URL"),
-    }
-    try:
-        from lib.llm import ChatMessage as CM, KenariClient as KC, LLMConfig as LC
-
-        client = KC(LC.from_env())
-        out = client.complete([CM("user", "say hi in 2 words")], max_tokens=20)
-        info["model_call"] = "ok"
-        info["model_reply"] = out[:80]
-    except Exception as exc:  # noqa: BLE001
-        info["model_call"] = f"{type(exc).__name__}: {exc}"
-        info["trace"] = traceback.format_exc()[-600:]
-    return info
-
-
-@app.get("/api/_diag2")
-def _diag2(query: str = "date night") -> dict[str, Any]:
-    """Temporary: run the full chat path and report exactly where it breaks."""
-    import traceback
-
-    from lib.catalogue import SYSTEM_PROMPT as SP
-    from lib.catalogue import build_selection_prompt as BSP
-
-    steps: dict[str, Any] = {}
-    try:
-        steps["catalogue_size"] = len(CATALOGUE)
-        prompt = BSP(CATALOGUE, query)
-        steps["prompt_len"] = len(prompt)
-        client = _client()
-        steps["client"] = "ok"
-        raw = client.complete(
-            [ChatMessage("system", SP), ChatMessage("user", prompt)],
-            temperature=0.6,
-            max_tokens=900,
-        )
-        steps["raw_len"] = len(raw)
-        steps["raw_head"] = raw[:150]
-        selection = parse_selection(raw)
-        steps["parsed_keys"] = list(selection.keys())
-        steps["hydrated"] = len(
-            hydrate(selection.get("recommendations", []), CATALOGUE)
-        )
-    except Exception as exc:  # noqa: BLE001
-        steps["error"] = f"{type(exc).__name__}: {exc}"
-        steps["trace"] = traceback.format_exc()[-900:]
-    return steps
