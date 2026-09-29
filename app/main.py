@@ -89,6 +89,11 @@ async def chat(request: ChatRequest) -> JSONResponse:
     except LLMError as exc:
         logger.warning("chat failed: %s", exc)
         raise HTTPException(status_code=502, detail=str(exc)) from exc
+    except Exception as exc:  # noqa: BLE001 - surface the real cause, not a bare 500
+        logger.exception("chat crashed")
+        raise HTTPException(
+            status_code=500, detail=f"{type(exc).__name__}: {exc}"
+        ) from exc
 
     payload = parse_selection(raw)
     payload["recommendations"] = hydrate(payload.get("recommendations", []), CATALOGUE)
