@@ -1,0 +1,182 @@
+[
+  {
+    "name": "Black Opium",
+    "brand": "Yves Saint Laurent",
+    "family": "Warm Oriental",
+    "notes": ["coffee", "vanilla", "white flowers", "pink pepper", "patchouli"],
+    "moods": ["confident", "bold", "sensual"],
+    "occasions": ["date night", "evening out"],
+    "longevity": "long"
+  },
+  {
+    "name": "Sauvage",
+    "brand": "Dior",
+    "family": "Fresh Spicy",
+    "notes": ["bergamot", "ambroxan", "pepper", "lavender", "vetiver"],
+    "moods": ["confident", "clean", "easygoing"],
+    "occasions": ["daily wear", "office", "daytime"],
+    "longevity": "long"
+  },
+  {
+    "name": "Aventus",
+    "brand": "Creed",
+    "family": "Fruity Chypre",
+    "notes": ["pineapple", "birch", "blackcurrant", "apple", "musk"],
+    "moods": ["ambitious", "confident", "sharp"],
+    "occasions": ["formal", "office", "daytime"],
+    "longevity": "long"
+  },
+  {
+    "name": "Baccarat Rouge 540",
+    "brand": "Maison Francis Kurkdjian",
+    "family": "Amber Floral",
+    "notes": ["saffron", "jasmine", "amberwood", "fir resin", "cedar"],
+    "moods": ["elegant", "magnetic", "refined"],
+    "occasions": ["special event", "evening out", "formal"],
+    "longevity": "very long"
+  },
+  {
+    "name": "Oud Wood",
+    "brand": "Tom Ford",
+    "family": "Woody Oriental",
+    "notes": ["oud", "rosewood", "cardamom", "sandalwood", "vanilla"],
+    "moods": ["grounded", "mature", "warm"],
+    "occasions": ["evening out", "formal", "cold weather"],
+    "longevity": "long"
+  },
+  {
+    "name": "La Vie Est Belle",
+    "brand": "Lancôme",
+    "family": "Sweet Floral",
+    "notes": ["iris", "praline", "vanilla", "patchouli", "orange blossom"],
+    "moods": ["cheerful", "romantic", "soft"],
+    "occasions": ["daily wear", "daytime", "date night"],
+    "longevity": "long"
+  },
+  {
+    "name": "Acqua di Gio Profumo",
+    "brand": "Giorgio Armani",
+    "family": "Aquatic Woody",
+    "notes": ["bergamot", "maritime notes", "sage", "incense", "patchouli"],
+    "moods": ["calm", "clean", "composed"],
+    "occasions": ["office", "daytime", "warm weather"],
+    "longevity": "moderate"
+  },
+  {
+    "name": "Light Blue",
+    "brand": "Dolce & Gabbana",
+    "family": "Citrus Fresh",
+    "notes": ["sicilian lemon", "apple", "bamboo", "jasmine", "cedar"],
+    "moods": ["bright", "relaxed", "fresh"],
+    "occasions": ["tropical humidity", "daytime", "casual"],
+    "longevity": "moderate"
+  },
+  {
+    "name": "Nautica Voyage",
+    "brand": "Nautica",
+    "family": "Aquatic Fresh",
+    "notes": ["green leaves", "apple", "mimosa", "musk", "cedar"],
+    "moods": ["easygoing", "clean", "energetic"],
+    "occasions": ["tropical humidity", "casual", "daytime", "sport"],
+    "longevity": "moderate"
+  },
+  {
+    "name": "Tobacco Vanille",
+    "brand": "Tom Ford",
+    "family": "Warm Spicy",
+    "notes": ["tobacco leaf", "tonka bean", "vanilla", "cocoa", "dried fruit"],
+    "moods": ["cozy", "rich", "nostalgic"],
+    "occasions": ["cold weather", "evening out", "formal"],
+    "longevity": "very long"
+  },
+  {
+    "name": "Chloe Eau de Parfum",
+    "brand": "Chloé",
+    "family": "Floral",
+    "notes": ["peony", "lychee", "freesia", "rose", "cedar"],
+    "moods": ["romantic", "gentle", "elegant"],
+    "occasions": ["daytime", "date night", "office"],
+    "longevity": "moderate"
+  },
+  {
+    "name": "Versace Eros",
+    "brand": "Versace",
+    "family": "Aromatic Fougère",
+    "notes": ["mint", "green apple", "tonka bean", "vanilla", "cedar"],
+    "moods": ["playful", "energetic", "bold"],
+    "occasions": ["night out", "date night", "cold weather"],
+    "longevity": "long"
+  },
+  {
+    "name": "Silver Mountain Water",
+    "brand": "Creed",
+    "family": "Fresh Woody",
+    "notes": ["green tea", "blackcurrant", "bergamot", "musk", "sandalwood"],
+    "moods": ["serene", "clean", "quiet"],
+    "occasions": ["office", "daytime", "warm weather"],
+    "longevity": "moderate"
+  },
+  {
+    "name": "Good Girl",
+    "brand": "Carolina Herrera",
+    "family": "Warm Floral",
+    "notes": ["almond", "coffee", "tuberose", "jasmine", "tonka bean"],
+    "moods": ["confident", "sensual", "daring"],
+    "occasions": ["date night", "evening out", "night out"],
+    "longevity": "long"
+  },
+  {
+    "name": "Y Eau de Parfum",
+    "brand": "Yves Saint Laurent",
+    "family": "Aromatic Fougère",
+    "notes": ["apple", "sage", "geranium", "tonka bean", "cedar"],
+    "moods": ["ambitious", "clean", "modern"],
+    "occasions": ["office", "daily wear", "formal"],
+    "longevity": "long"
+  },
+  {
+    "name": "J'adore",
+    "brand": "Dior",
+    "family": "Floral Bouquet",
+    "notes": ["ylang-ylang", "jasmine", "tuberose", "rose", "musk"],
+    "moods": ["elegant", "feminine", "graceful"],
+    "occasions": ["formal", "special event", "daytime"],
+    "longevity": "long"
+  },
+  {
+    "name": "Explorer",
+    "brand": "Montblanc",
+    "family": "Woody Aromatic",
+    "notes": ["bergamot", "vetiver", "cacao", "patchouli", "ambroxan"],
+    "moods": ["adventurous", "grounded", "warm"],
+    "occasions": ["daily wear", "outdoor", "cool weather"],
+    "longevity": "long"
+  },
+  {
+    "name": "Flowerbomb",
+    "brand": "Viktor & Rolf",
+    "family": "Floral Oriental",
+    "notes": ["jasmine", "rose", "freesia", "orchid", "patchouli"],
+    "moods": ["romantic", "rich", "warm"],
+    "occasions": ["date night", "evening out", "special event"],
+    "longevity": "long"
+  },
+  {
+    "name": "Bleu de Chanel",
+    "brand": "Chanel",
+    "family": "Woody Aromatic",
+    "notes": ["lemon", "mint", "ginger", "jasmine", "sandalwood"],
+    "moods": ["composed", "confident", "professional"],
+    "occasions": ["office", "formal", "evening out"],
+    "longevity": "long"
+  },
+  {
+    "name": "Idôle",
+    "brand": "Lancôme",
+    "family": "Fresh Floral",
+    "notes": ["pear", "rose", "jasmine", "vanilla", "musc"],
+    "moods": ["bright", "modern", "clean"],
+    "occasions": ["tropical humidity", "daytime", "office"],
+    "longevity": "moderate"
+  }
+]

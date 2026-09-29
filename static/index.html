@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>L'ORE-AI — Fragrance Intelligence</title>
+    <meta
+      name="description"
+      content="An AI fragrance concierge that matches scents to your mood, occasion, and identity."
+    />
+    <style>
+      :root {
+        --ink: #1a1714;
+        --muted: #6b6157;
+        --paper: #faf7f2;
+        --line: #e3dcd2;
+        --accent: #8a6a3b;
+        --danger: #8c3a2b;
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        background: var(--paper);
+        color: var(--ink);
+        font: 16px/1.6 ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+      }
+      main { max-width: 44rem; margin: 0 auto; padding: 3rem 1.25rem 6rem; }
+      header { border-bottom: 1px solid var(--line); padding-bottom: 1.5rem; }
+      h1 {
+        font-family: ui-serif, Georgia, "Times New Roman", serif;
+        font-size: 2.25rem;
+        margin: 0 0 0.35rem;
+        letter-spacing: 0.01em;
+      }
+      .tagline { color: var(--muted); margin: 0; font-size: 0.95rem; }
+      .status {
+        font-size: 0.8rem;
+        color: var(--muted);
+        margin-top: 0.9rem;
+        font-variant-numeric: tabular-nums;
+      }
+      .status.bad { color: var(--danger); }
+      form { margin: 2rem 0 0; display: grid; gap: 0.75rem; }
+      textarea {
+        width: 100%;
+        min-height: 5.5rem;
+        padding: 0.85rem 1rem;
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        background: #fff;
+        font: inherit;
+        resize: vertical;
+      }
+      textarea:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+      .row { display: flex; gap: 0.75rem; align-items: center; flex-wrap: wrap; }
+      button {
+        font: inherit;
+        font-weight: 600;
+        padding: 0.7rem 1.4rem;
+        border: 1px solid var(--ink);
+        border-radius: 999px;
+        background: var(--ink);
+        color: var(--paper);
+        cursor: pointer;
+      }
+      button:disabled { opacity: 0.45; cursor: not-allowed; }
+      button.ghost { background: transparent; color: var(--ink); }
+      select {
+        font: inherit;
+        padding: 0.55rem 0.7rem;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: #fff;
+      }
+      #log { margin-top: 2.5rem; display: grid; gap: 1.5rem; }
+      .turn { border-top: 1px solid var(--line); padding-top: 1.25rem; }
+      .turn.user p { margin: 0; color: var(--muted); }
+      .turn.assistant .reply { margin: 0.5rem 0 0; white-space: pre-wrap; }
+      .error { color: var(--danger); }
+      .picks { display: grid; gap: 0.75rem; margin-top: 1.1rem; }
+      .pick {
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        background: #fff;
+        padding: 0.9rem 1rem;
+      }
+      .pick h3 {
+        margin: 0 0 0.15rem;
+        font-family: ui-serif, Georgia, serif;
+        font-size: 1.05rem;
+      }
+      .pick .meta { color: var(--muted); font-size: 0.82rem; margin: 0 0 0.5rem; }
+      .pick .reason { margin: 0; font-size: 0.92rem; }
+      .notes { margin: 0.5rem 0 0; display: flex; flex-wrap: wrap; gap: 0.35rem; padding: 0; list-style: none; }
+      .notes li {
+        font-size: 0.72rem;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        padding: 0.15rem 0.55rem;
+        color: var(--muted);
+      }
+      footer { margin-top: 4rem; color: var(--muted); font-size: 0.8rem; }
+      code { background: #efe9df; padding: 0.1rem 0.35rem; border-radius: 4px; }
+    </style>
+  </head>
+  <body>
+    <main>
+      <header>
+        <h1>L'ORE-AI</h1>
+        <p class="tagline">Fragrance intelligence — matched to your mood, occasion, and identity.</p>
+        <p class="status" id="status">Checking service…</p>
+      </header>
+
+      <form id="form">
+        <label for="message" class="tagline">Describe the occasion, your mood, or notes you already love.</label>
+        <textarea
+          id="message"
+          required
+          placeholder="Date night, I want something confident but not loud."
+        ></textarea>
+        <div class="row">
+          <button type="submit" id="send">Find my scent</button>
+          <button type="button" class="ghost" id="streamBtn">Stream reply instead</button>
+          <label class="tagline" for="effort">Reasoning:</label>
+          <select id="effort">
+            <option value="">default</option>
+            <option value="low">low</option>
+            <option value="high">high</option>
+            <option value="max">max</option>
+          </select>
+        </div>
+      </form>
+
+      <section id="log" aria-live="polite"></section>
+
+      <footer>
+        Recommendations are drawn from a fixed catalogue of
+        <span id="catSize">?</span> fragrances. The model selects and explains; it
+        does not invent products.
+      </footer>
+    </main>
+
+    <script>
+      const history = [];
+      const log = document.getElementById("log");
+      const statusEl = document.getElementById("status");
+      const form = document.getElementById("form");
+      const messageEl = document.getElementById("message");
+      const sendBtn = document.getElementById("send");
+      const streamBtn = document.getElementById("streamBtn");
+      const effortEl = document.getElementById("effort");
+
+      const el = (tag, cls, text) => {
+        const node = document.createElement(tag);
+        if (cls) node.className = cls;
+        if (text !== undefined) node.textContent = text;
+        return node;
+      };
+
+      async function checkHealth() {
+        try {
+          const res = await fetch("/health");
+          const data = await res.json();
+          document.getElementById("catSize").textContent = data.catalogue_size;
+          if (data.llm_configured) {
+            statusEl.textContent = `Ready — model ${data.model}`;
+            statusEl.classList.remove("bad");
+          } else {
+            statusEl.textContent =
+              "Model not configured — set KENARI_API_KEY in this Space's secrets.";
+            statusEl.classList.add("bad");
+          }
+        } catch {
+          statusEl.textContent = "Service unreachable.";
+          statusEl.classList.add("bad");
+        }
+      }
+
+      function addTurn(role) {
+        const turn = el("div", `turn ${role}`);
+        log.prepend(turn);
+        return turn;
+      }
+
+      function renderPicks(container, picks) {
+        if (!picks.length) return;
+        const wrap = el("div", "picks");
+        for (const p of picks) {
+          const card = el("div", "pick");
+          card.append(el("h3", null, `${p.name}`));
+          card.append(
+            el("p", "meta", `${p.brand} · ${p.family} · longevity: ${p.longevity}`)
+          );
+          card.append(el("p", "reason", p.reason || ""));
+          const notes = el("ul", "notes");
+          for (const n of p.notes) notes.append(el("li", null, n));
+          card.append(notes);
+          wrap.append(card);
+        }
+        container.append(wrap);
+      }
+
+      form.addEventListener("submit", async (event) => {
+        event.preventDefault();
+        const message = messageEl.value.trim();
+        if (!message) return;
+
+        const userTurn = addTurn("user");
+        userTurn.append(el("p", null, message));
+
+        const turn = addTurn("assistant");
+        const reply = el("p", "reply", "…");
+        turn.append(reply);
+        sendBtn.disabled = true;
+
+        try {
+          const res = await fetch("/api/chat", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              message,
+              history,
+              reasoning_effort: effortEl.value || null,
+            }),
+          });
+          const data = await res.json();
+          if (!res.ok) throw new Error(data.detail || `Request failed (${res.status})`);
+
+          reply.textContent = data.reply || "No reply returned.";
+          renderPicks(turn, data.recommendations || []);
+          history.push({ role: "user", content: message });
+          history.push({ role: "assistant", content: data.reply || "" });
+          messageEl.value = "";
+        } catch (err) {
+          reply.textContent = String(err.message || err);
+          reply.classList.add("error");
+        } finally {
+          sendBtn.disabled = false;
+        }
+      });
+
+      streamBtn.addEventListener("click", async () => {
+        const message = messageEl.value.trim();
+        if (!message) return;
+
+        const turn = addTurn("assistant");
+        const out = el("p", "reply", "");
+        turn.append(out);
+        streamBtn.disabled = true;
+
+        try {
+          const res = await fetch("/api/chat/stream", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              message,
+              history,
+              reasoning_effort: effortEl.value || null,
+            }),
+          });
+          if (!res.ok || !res.body) throw new Error(`Request failed (${res.status})`);
+
+          const reader = res.body.getReader();
+          const decoder = new TextDecoder();
+          let buffer = "";
+
+          while (true) {
+            const { value, done } = await reader.read();
+            if (done) break;
+            buffer += decoder.decode(value, { stream: true });
+            const parts = buffer.split("\n\n");
+            buffer = parts.pop();
+            for (const part of parts) {
+              const line = part.trim();
+              if (!line.startsWith("data:")) continue;
+              const payload = line.slice(5).trim();
+              if (payload === "[DONE]") continue;
+              try {
+                const parsed = JSON.parse(payload);
+                if (parsed.error) {
+                  out.textContent = parsed.error;
+                  out.classList.add("error");
+                } else if (parsed.delta) {
+                  out.textContent += parsed.delta;
+                }
+              } catch {}
+            }
+          }
+          history.push({ role: "user", content: message });
+          history.push({ role: "assistant", content: out.textContent });
+          messageEl.value = "";
+        } catch (err) {
+          out.textContent = String(err.message || err);
+          out.classList.add("error");
+        } finally {
+          streamBtn.disabled = false;
+        }
+      });
+
+      checkHealth();
+    </script>
+  </body>
+</html>
