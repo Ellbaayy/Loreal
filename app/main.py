@@ -22,7 +22,7 @@ from lib.selection import hydrate, parse_selection
 logging.basicConfig(level=logging.INFO, format="%(levelname)s %(name)s: %(message)s")
 logger = logging.getLogger("lore")
 
-STATIC_DIR = Path(__file__).resolve().parent.parent / "static"
+STATIC_DIR = Path(__file__).resolve().parent.parent / "public"
 
 app = FastAPI(title="L'ORE-AI", version="2.0.0")
 
@@ -127,6 +127,11 @@ async def chat_stream(request: ChatRequest) -> StreamingResponse:
 
 @app.get("/")
 def index() -> FileResponse:
+    """Local development convenience.
+
+    On Vercel, `public/index.html` is served from the CDN before requests ever
+    reach this function, so this route only runs when hosted elsewhere.
+    """
     return FileResponse(STATIC_DIR / "index.html")
 
 

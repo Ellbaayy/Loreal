@@ -31,7 +31,7 @@ whole reply over a cosmetic difference throws away good recommendations.
 
 ```
 api/          Vercel serverless functions (stdlib only, no dependencies)
-server/       FastAPI application (alternative deployment)
+app/          FastAPI application (alternative deployment)
 lib/          Shared domain code: catalogue, model client, response parsing
 data/         fragrances.json — the catalogue, and the source of truth
 static/       Demo interface
@@ -69,10 +69,10 @@ For real token-by-token streaming, or to run locally:
 
 ```bash
 python3 -m venv .venv && source .venv/bin/activate
-pip install -r server/requirements.txt
+pip install -r app/requirements.txt
 cp .env.example .env      # then fill in KENARI_API_KEY
 set -a; source .env; set +a
-uvicorn server.main:app --reload
+uvicorn app.main:app --reload
 ```
 
 Open <http://127.0.0.1:8000>. The header reports which model is live, and says
