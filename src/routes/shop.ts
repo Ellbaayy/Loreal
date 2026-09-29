@@ -1,5 +1,5 @@
 import { Hono } from 'hono';
-import { callGroq } from '../groq';
+import { callLLM } from '../llm';
 
 const shop = new Hono();
 
@@ -43,7 +43,7 @@ OUTPUT STRICT JSON ONLY (NO markdown, NO extra text):
   }
 }`;
 
-  const raw = await callGroq([{ role: 'user', content: prompt }], 10000);
+  const raw = await callLLM([{ role: 'user', content: prompt }], 10000);
 
   if (raw) {
     const start = raw.indexOf('{');

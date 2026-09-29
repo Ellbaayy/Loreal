@@ -1,6 +1,6 @@
 import { Hono } from 'hono';
 import { query, execute } from '../db';
-import { callGroq, transcribeAudio, callGroqVision } from '../groq';
+import { callLLM, transcribeAudio, callVision } from '../llm';
 import { uploadToImgbb } from '../imgbb';
 import { getPerfumeDatabase, type Perfume, type ChatSession, type AiResponse } from '../types';
 
@@ -85,7 +85,7 @@ chat.post('/chat', async (c) => {
     return { role, content };
   });
 
-  const raw = await callGroq([
+  const raw = await callLLM([
     { role: 'system', content: systemPrompt },
     ...groqMessages,
   ]);
@@ -197,7 +197,7 @@ chat.post('/chat/with-audio', async (c) => {
 
   let finalOutput: any = { text: '', ready: false, recommendations: [], session_id: sessionId, transcript };
 
-  const raw = await callGroq([
+  const raw = await callLLM([
     { role: 'system', content: systemPrompt },
     { role: 'user', content: transcript },
   ]);
@@ -288,7 +288,7 @@ chat.post('/chat/with-image', async (c) => {
     ? 'Analyze this perfume-related image. The user says: "' + textMessage + '". Describe what you see and identify the perfume if possible.'
     : 'Analyze this perfume-related image. Describe the perfume bottle, branding, and any visible details. Identify the perfume if possible.';
 
-  const visionResult = await callGroqVision(visionPrompt, base64);
+  const visionResult = await callVision(visionPrompt, base64);
 
   const userContent = textMessage || 'Lihat gambar ini';
   const messages = [{ role: 'user', content: userContent }];
@@ -319,7 +319,7 @@ chat.post('/chat/with-image', async (c) => {
 
   let finalOutput: any = { text: '', ready: false, recommendations: [], session_id: sessionId, vision_analysis: visionResult };
 
-  const raw = await callGroq([
+  const raw = await callLLM([
     { role: 'system', content: systemPrompt },
     { role: 'user', content: userContent },
   ]);

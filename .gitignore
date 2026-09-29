@@ -1,4 +1,11 @@
 
+# Dependencies
+node_modules/
+
+# Local secrets (Space secrets are set in the HF UI, never committed)
+.env
+.env.local
+
 # Images (hosted on imgbb)
 uploads/
 *.png
