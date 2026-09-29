@@ -43,7 +43,7 @@ class ChatRequest(BaseModel):
     reasoning_effort: str | None = Field(default=None, pattern="^(low|high|max)$")
 
 
-@app.get("/health")
+@app.get("/api/health")
 def health() -> dict[str, Any]:
     """Report whether the service is up and whether a key is present.
 
