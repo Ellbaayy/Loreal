@@ -1,0 +1,9 @@
+# Dependencies
+node_modules/
+
+# Local secrets
+.env
+.env.local
+
+# Uploaded media (served from GitHub + jsDelivr, see src/storage.ts)
+uploads/

@@ -1,0 +1,16 @@
+{
+  "name": "lore-ai",
+  "module": "index.ts",
+  "type": "module",
+  "private": true,
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  },
+  "dependencies": {
+    "hono": "^4.12.18",
+    "mysql2": "^3.22.3"
+  }
+}
