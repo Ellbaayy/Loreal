@@ -1,31 +1,35 @@
----
-title: LORE-AI
-emoji: 🧴
-colorFrom: purple
-colorTo: gray
-sdk: docker
-app_port: 7860
----
+<h1 align="center">🧴 L'ORE-AI — AI Fragrance Concierge</h1>
 
 <p align="center">
-  <img src="docs/logo.png" alt="L'ORE-AI" width="300">
-</p>
-
-<h1 align="center">L'ORE-AI</h1>
-
-<p align="center">
-  <strong>An AI fragrance concierge that cannot invent a perfume.</strong>
+  <img src="docs/logo.png" alt="L'ORE-AI" width="280">
 </p>
 
 <p align="center">
-  <img alt="Bun 1.3+" src="https://img.shields.io/badge/Bun-1.3%2B-black?logo=bun&logoColor=white">
-  <img alt="Hono 4" src="https://img.shields.io/badge/Hono-4-E36002">
-  <img alt="MySQL 8 / MariaDB 10.4" src="https://img.shields.io/badge/MySQL%20%2F%20MariaDB-8%20%7C%2010.4-4479A1?logo=mysql&logoColor=white">
-  <img alt="Docker" src="https://img.shields.io/badge/Docker-ready-2496ED?logo=docker&logoColor=white">
-  <img alt="No build step" src="https://img.shields.io/badge/frontend-no%20build%20step-brightgreen">
+  <em>"An AI fragrance concierge that cannot invent a perfume."</em><br>
+  Bun + Hono · MySQL · 50-perfume catalogue · grounded recommendations
+</p>
+
+<p align="center">
+  <a href="https://gesanghemas-lore-ai.hf.space"><img alt="Live demo" src="https://img.shields.io/badge/LIVE%20DEMO-HF%20SPACE-FFD21E?style=for-the-badge&logo=huggingface&logoColor=black"></a>
+  <a href="https://github.com/Ellbaayy/Loreal"><img alt="Repository" src="https://img.shields.io/badge/REPOSITORY-GITHUB-181717?style=for-the-badge&logo=github&logoColor=white"></a>
+  <a href="#quick-start"><img alt="Platform" src="https://img.shields.io/badge/PLATFORM-WEB%20APPLICATION-2ea44f?style=for-the-badge"></a>
+  <a href="#configuration"><img alt="Tech" src="https://img.shields.io/badge/TECH-BUN%20%7C%20HONO%20%7C%20MYSQL-000000?style=for-the-badge"></a>
+</p>
+
+<p align="center">
+  <a href="#overview"><img alt="Overview" src="https://img.shields.io/badge/OVERVIEW-6e7681?style=flat-square"></a>
+  <a href="#features"><img alt="Features" src="https://img.shields.io/badge/FEATURES-6e7681?style=flat-square"></a>
+  <a href="#screenshots"><img alt="Screenshots" src="https://img.shields.io/badge/SCREENSHOTS-6e7681?style=flat-square"></a>
+  <a href="#quick-start"><img alt="Quick start" src="https://img.shields.io/badge/QUICK%20START-2ea44f?style=flat-square"></a>
+  <a href="#database"><img alt="Database" src="https://img.shields.io/badge/DATABASE-4479A1?style=flat-square"></a>
+  <a href="#api"><img alt="API" src="https://img.shields.io/badge/API-E36002?style=flat-square"></a>
+  <a href="#configuration"><img alt="Configuration" src="https://img.shields.io/badge/CONFIGURATION-6e7681?style=flat-square"></a>
+  <a href="#deployment"><img alt="Deployment" src="https://img.shields.io/badge/DEPLOYMENT-2496ED?style=flat-square"></a>
 </p>
 
 ---
+
+## Overview
 
 Describe an occasion, a mood, or notes you already like. L'ORE-AI answers with
 three fragrances from a fixed catalogue of 50, each with a reason, popularity
@@ -33,7 +37,7 @@ and niche scores, projection, and the notes that justify the pick.
 
 The interesting part is not the model call. It is what happens after it.
 
-## The rule: the model proposes, the server verifies
+**The rule: the model proposes, the server verifies.**
 
 ```
 POST /api/chat
@@ -49,6 +53,34 @@ is treated as an untrusted source: it can only *select* from the catalogue,
 never *add* to it. The join happens by id in `src/routes/chat.ts`, so a reply
 that names a perfume outside the database degrades to fewer cards, never to a
 fabricated one.
+
+```mermaid
+flowchart LR
+  B[Browser<br/>index.html] -->|POST /api/chat| H[Hono app<br/>src/index.ts]
+  A[Admin panel<br/>/admin/] -->|Bearer token| H
+  H --> C[Chat route<br/>src/routes/chat.ts]
+  C --> D[(MySQL<br/>perfumes)]
+  C --> L{Provider chain}
+  L --> K[Kenari]
+  L --> G[Groq]
+  L --> F[Hugging Face]
+  C --> S[(chat_sessions<br/>chat_messages)]
+  H --> M[Media upload<br/>src/storage.ts]
+  M --> GH[GitHub repo] --> CDN[jsDelivr]
+```
+
+## Features
+
+- **Grounded recommendations** — every card is a database row, joined by id.
+- **Bilingual by detection** — Indonesian or English, decided per message.
+- **Provider chain** — Kenari (primary), Groq, Hugging Face; the first that
+  answers wins, and a rejected `reasoning_effort` is retried without it.
+- **Voice and vision input** — Whisper transcription, image-based queries.
+- **Persistent sessions** — transcripts in MySQL, deletable with cascade.
+- **Admin panel** — catalogue CRUD with image upload, no separate tooling.
+- **Media on a CDN** — uploads are committed to a GitHub repo and served via
+  jsDelivr, because `i.ibb.co` is DNS-sinkholed by some Indonesian ISPs.
+- **No frontend build** — one `index.html`, served by the same process.
 
 ## Screenshots
 
@@ -70,37 +102,7 @@ fabricated one.
 
 <p align="center"><em>Admin panel: 50 perfumes, 10 brands, 26 scent families, with image upload.</em></p>
 
-## Features
-
-- **Grounded recommendations** — every card is a database row, joined by id.
-- **Bilingual by detection** — Indonesian or English, decided per message.
-- **Provider chain** — Kenari (primary), Groq, Hugging Face; the first that
-  answers wins, and a rejected `reasoning_effort` is retried without it.
-- **Voice and vision input** — Whisper transcription, image-based queries.
-- **Persistent sessions** — transcripts in MySQL, deletable with cascade.
-- **Admin panel** — catalogue CRUD with image upload, no separate tooling.
-- **Media on a CDN** — uploads are committed to a GitHub repo and served via
-  jsDelivr, because `i.ibb.co` is DNS-sinkholed by some Indonesian ISPs.
-- **No frontend build** — one `index.html`, served by the same process.
-
-## Architecture
-
-```mermaid
-flowchart LR
-  B[Browser<br/>index.html] -->|POST /api/chat| H[Hono app<br/>src/index.ts]
-  A[Admin panel<br/>/admin/] -->|Bearer token| H
-  H --> C[Chat route<br/>src/routes/chat.ts]
-  C --> D[(MySQL<br/>perfumes)]
-  C --> L{Provider chain}
-  L --> K[Kenari]
-  L --> G[Groq]
-  L --> F[Hugging Face]
-  C --> S[(chat_sessions<br/>chat_messages)]
-  H --> M[Media upload<br/>src/storage.ts]
-  M --> GH[GitHub repo] --> CDN[jsDelivr]
-```
-
-## Quick start (local, XAMPP)
+## Quick start
 
 Prerequisites: [Bun](https://bun.sh) 1.3+ and XAMPP at `/opt/lampp` with its
 MySQL/MariaDB.
@@ -209,7 +211,14 @@ The container database is published on `127.0.0.1:3307` so it does not collide
 with XAMPP on 3306; inside the compose network the app uses `db:3306` with user
 `lore`.
 
-**Hugging Face Space** — the `README.md` front matter declares `sdk: docker`
-and `app_port: 7860`, so the same `Dockerfile` deploys unchanged. Set the
-secrets (`DB_*`, `KENARI_API_KEY`, `ADMIN_PASSWORD`, media variables) in the
-Space settings, never in the repository.
+**Hugging Face Space** — the same `Dockerfile` deploys unchanged. The Space's
+own `README.md` carries the `sdk: docker` / `app_port: 7860` front matter; this
+repository's README omits it so GitHub renders a clean page. Set the secrets
+(`DB_*`, `KENARI_API_KEY`, `ADMIN_PASSWORD`, media variables) in the Space
+settings, never in the repository.
+
+---
+
+<p align="center">
+  <sub>Built with Bun, Hono and MySQL · <a href="#overview">back to top</a></sub>
+</p>
