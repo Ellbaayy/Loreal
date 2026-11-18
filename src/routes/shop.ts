@@ -3,6 +3,24 @@ import { callLLM } from '../llm';
 
 const shop = new Hono();
 
+// The model returns URLs; only these hosts are allowed through. Anything else
+// (including javascript: and data:) falls back to the generated search links.
+const ALLOWED_HOSTS = ['shopee.co.id', 'tokopedia.com', 'lazada.co.id', 'google.com'];
+
+function safeUrl(value: unknown): string | null {
+  if (typeof value !== 'string') return null;
+  try {
+    const url = new URL(value);
+    if (url.protocol !== 'https:') return null;
+    const host = url.hostname.replace(/^www\./, '');
+    return ALLOWED_HOSTS.some((allowed) => host === allowed || host.endsWith('.' + allowed))
+      ? url.toString()
+      : null;
+  } catch {
+    return null;
+  }
+}
+
 function buildManualLinks(name: string, brand: string) {
   return {
     online: [
@@ -50,9 +68,22 @@ OUTPUT STRICT JSON ONLY (NO markdown, NO extra text):
     const end = raw.lastIndexOf('}');
     if (start !== -1 && end !== -1) {
       try {
-        const aiData = JSON.parse(raw.slice(start, end + 1));
-        if (aiData?.online && Array.isArray(aiData.online)) {
-          return c.json(aiData);
+        const aiData = JSON.parse(raw.slice(start, end + 1)) as {
+          online?: { platform?: unknown; url?: unknown }[];
+          offline?: { advice?: unknown; map_url?: unknown };
+        };
+        const online = (aiData.online || [])
+          .map((link) => ({ platform: String(link?.platform || '').slice(0, 40), url: safeUrl(link?.url) }))
+          .filter((link): link is { platform: string; url: string } => Boolean(link.url));
+        const mapUrl = safeUrl(aiData.offline?.map_url);
+        if (online.length === 3) {
+          return c.json({
+            online,
+            offline: {
+              advice: String(aiData.offline?.advice || manualLinks.offline.advice).slice(0, 300),
+              map_url: mapUrl || manualLinks.offline.map_url,
+            },
+          });
         }
       } catch { }
     }

@@ -128,6 +128,10 @@ default `group3jaya` — change it before exposing the app).
 `cli` (mysql shell). It probes the server with `mariadb-admin` because XAMPP's
 own `lampp status` greps for `netstat`, which is not installed on every distro.
 
+Once the server is up, `./scripts/smoke.sh` checks the security invariants that
+are easy to regress: no source or secret file served, client errors instead of
+500s, admin auth rejecting the bare password, uploads rejecting non-images.
+
 ## Database
 
 Everything needed to rebuild the database is in the repository.
@@ -145,7 +149,7 @@ Everything needed to rebuild the database is in the repository.
 | Table | Purpose |
 |---|---|
 | `perfumes` | catalogue: brand, name, image, family, occasion, mood, notes, longevity |
-| `chat_sessions` | one row per conversation, `updated_at` bumped per message |
+| `chat_sessions` | one row per conversation, `updated_at` bumped per message, `visitor_id` scopes it to a browser |
 | `chat_messages` | messages, FK to `chat_sessions` with `ON DELETE CASCADE` |
 
 `chat_messages.role` is `VARCHAR(16)`, not `ENUM`: the client posts arbitrary
@@ -158,12 +162,36 @@ role strings, and a rejected value would abort the whole insert loop.
 | `POST` | `/api/chat` | `{messages, session_id}` → text + up to 3 recommendations |
 | `POST` | `/api/chat/with-audio` | multipart, Whisper transcription |
 | `POST` | `/api/chat/with-image` | multipart, vision model |
-| `GET` | `/api/sessions` | last 50 sessions with message counts |
-| `GET` | `/api/sessions/:id/messages` | transcript |
+| `GET` | `/api/sessions` | last 50 sessions for this visitor |
+| `GET` | `/api/sessions/:id/messages` | transcript, 404 unless the visitor owns it |
 | `DELETE` | `/api/sessions/:id` | deletes messages via cascade |
 | `POST` | `/api/shop-info` | Shopee / Tokopedia / Lazada / Maps links |
-| `POST` | `/api/admin/login` | password → bearer token |
+| `POST` | `/api/admin/login` | password → signed bearer token (12 h) |
 | `GET` `POST` `PUT` `DELETE` | `/api/admin/perfumes[/:id]` | catalogue CRUD, multipart image |
+
+## Security
+
+The app is a public concierge with no user accounts, so the threat model is
+"anyone on the internet can call every endpoint". What is enforced:
+
+| Area | Control |
+|---|---|
+| Static files | Explicit allowlist (`/`, `/admin/`, `/uploads/*`). A catch-all `serveStatic` used to serve `.env`, `.git/config` and `src/` |
+| XSS | Every value interpolated into `innerHTML` is escaped; URLs are restricted to `http(s)`; inline handler arguments are JSON-encoded |
+| Admin auth | HMAC-signed token with a 12 h expiry, constant-time password compare, 5 attempts/min per IP. The password itself is never used as the token |
+| Sessions | Scoped to an anonymous `x-visitor-id`; another visitor gets 404, not someone else's transcript |
+| Request size | 256 KB for JSON, 12 MB for multipart, 5 MB per image, 10 MB per audio file |
+| Rate limits | 20 chat calls/min, 30 shop lookups/min, 5 logins/min per IP |
+| Uploads | Accepted only when the magic bytes are JPEG/PNG/WebP/GIF; the extension comes from the bytes, not the filename |
+| Outbound links | Shop URLs must be `https` on Shopee/Tokopedia/Lazada/Google, otherwise the generated search links are used |
+| Errors | Malformed JSON → 400, oversized body → 413, unknown route → 404; no stack traces in responses |
+| Container | Runs as the unprivileged `bun` user |
+
+Known limits, by design: there are no accounts, so a visitor id is a bearer
+secret in `localStorage` — clearing it loses the history; rate limits live in
+process memory, so they reset on restart and are per instance; and
+`ADMIN_PASSWORD` must be set in production (the built-in default is logged as a
+warning at startup).
 
 ## Configuration
 
@@ -175,7 +203,8 @@ All variables are read from the environment; `.env` is loaded by Bun.
 | `DB_HOST` `DB_PORT` `DB_NAME` | `127.0.0.1` `3306` `lore_ai_db` | database target |
 | `DB_USER` `DB_PASSWORD` | `root` / empty | XAMPP defaults |
 | `DB_SSL` | `false` | TLS for managed MySQL |
-| `ADMIN_PASSWORD` | `group3jaya` | bearer token for `/api/admin/*` |
+| `ADMIN_PASSWORD` | `group3jaya` | admin password; also keys the signed tokens |
+| `CORS_ORIGIN` | same-origin | comma-separated allowlist for cross-origin API use |
 | `KENARI_API_KEY` | — | primary provider |
 | `GROQ_API_KEY` | — | fallback chat + Whisper |
 | `HF_TOKEN` | — | final fallback chat/vision |
@@ -201,6 +230,7 @@ All variables are read from the environment; `.env` is loaded by Bun.
 ├── schema.sql            database schema
 ├── seed.sql              50-perfume catalogue
 ├── scripts/db.sh         XAMPP start/stop/init/reset/cli
+├── scripts/smoke.sh      smoke + security checks
 ├── docker-compose.yml    app + MariaDB (host port 3307)
 └── docs/                 logo and screenshots
 ```

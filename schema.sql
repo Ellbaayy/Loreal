@@ -33,13 +33,16 @@ CREATE TABLE IF NOT EXISTS perfumes (
 
 -- ── Chat sessions ────────────────────────────────────────────────────
 -- One row per conversation; `updated_at` is bumped on every new message.
+-- `visitor_id` is an anonymous browser id (x-visitor-id header): sessions are
+-- only listed, read and deleted by the visitor that created them.
 CREATE TABLE IF NOT EXISTS chat_sessions (
   id         INT UNSIGNED NOT NULL AUTO_INCREMENT,
   title      VARCHAR(255) NOT NULL DEFAULT 'New Conversation',
+  visitor_id VARCHAR(64) NOT NULL DEFAULT '',
   created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (id),
-  KEY idx_chat_sessions_updated (updated_at)
+  KEY idx_chat_sessions_visitor (visitor_id, updated_at)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- ── Chat messages ────────────────────────────────────────────────────
