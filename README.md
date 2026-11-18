@@ -56,17 +56,18 @@ fabricated one.
 
 ```mermaid
 flowchart LR
-  B[Browser<br/>index.html] -->|POST /api/chat| H[Hono app<br/>src/index.ts]
-  A[Admin panel<br/>/admin/] -->|Bearer token| H
-  H --> C[Chat route<br/>src/routes/chat.ts]
-  C --> D[(MySQL<br/>perfumes)]
+  B[Browser] -->|POST /api/chat| H[Hono app]
+  A[Admin panel] -->|Bearer token| H
+  H --> C[Chat route]
+  C --> D[(MySQL perfumes)]
   C --> L{Provider chain}
   L --> K[Kenari]
   L --> G[Groq]
   L --> F[Hugging Face]
-  C --> S[(chat_sessions<br/>chat_messages)]
-  H --> M[Media upload<br/>src/storage.ts]
-  M --> GH[GitHub repo] --> CDN[jsDelivr]
+  C --> S[(chat sessions)]
+  H --> M[Media upload]
+  M --> GH[GitHub repo]
+  GH --> CDN[jsDelivr]
 ```
 
 ## Features
