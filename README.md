@@ -1,7 +1,7 @@
 <h1 align="center">🧴 L'ORE-AI — AI Fragrance Concierge</h1>
 
 <p align="center">
-  <img src="docs/logo.png" alt="L'ORE-AI" width="280">
+  <img src="docs/brand-logo.png" alt="L'ORE-AI" width="280">
 </p>
 
 <p align="center">
