@@ -7,18 +7,53 @@ sdk: docker
 app_port: 7860
 ---
 
-# L'ORE-AI
+<p align="center">
+  <img src="docs/logo.png" alt="L'ORE-AI" width="300">
+</p>
 
-An AI fragrance concierge. Describe an occasion, a mood, or notes you like; it
-answers with three picks from a fixed catalogue of 50 perfumes, each with a
-reason, scores, and the notes that justify it.
-
-Bun + Hono backend, MySQL/MariaDB, one static frontend (`index.html`) and an
-admin panel (`/admin/`). No PHP: the admin UI is plain HTML/JS over the
-TypeScript API, so phpMyAdmin is not needed.
+<h1 align="center">L'ORE-AI</h1>
 
 <p align="center">
-  <img src="docs/screenshots/landing.png" alt="L'ORE-AI chat landing page" width="820">
+  <strong>An AI fragrance concierge that cannot invent a perfume.</strong>
+</p>
+
+<p align="center">
+  <img alt="Bun 1.3+" src="https://img.shields.io/badge/Bun-1.3%2B-black?logo=bun&logoColor=white">
+  <img alt="Hono 4" src="https://img.shields.io/badge/Hono-4-E36002">
+  <img alt="MySQL 8 / MariaDB 10.4" src="https://img.shields.io/badge/MySQL%20%2F%20MariaDB-8%20%7C%2010.4-4479A1?logo=mysql&logoColor=white">
+  <img alt="Docker" src="https://img.shields.io/badge/Docker-ready-2496ED?logo=docker&logoColor=white">
+  <img alt="No build step" src="https://img.shields.io/badge/frontend-no%20build%20step-brightgreen">
+</p>
+
+---
+
+Describe an occasion, a mood, or notes you already like. L'ORE-AI answers with
+three fragrances from a fixed catalogue of 50, each with a reason, popularity
+and niche scores, projection, and the notes that justify the pick.
+
+The interesting part is not the model call. It is what happens after it.
+
+## The rule: the model proposes, the server verifies
+
+```
+POST /api/chat
+  -> catalogue rows loaded from MySQL
+  -> system prompt: reply in the user's language, pick TOP 3, JSON only
+  -> provider chain: Kenari -> Groq -> Hugging Face
+  -> JSON parsed, every recommendation id matched back to its catalogue row
+  -> unknown ids dropped; the client only ever sees real rows
+```
+
+A recommender that hallucinates products is worse than no recommender. The model
+is treated as an untrusted source: it can only *select* from the catalogue,
+never *add* to it. The join happens by id in `src/routes/chat.ts`, so a reply
+that names a perfume outside the database degrades to fewer cards, never to a
+fabricated one.
+
+## Screenshots
+
+<p align="center">
+  <img src="docs/screenshots/landing.png" alt="Chat landing page" width="820">
 </p>
 
 <p align="center"><em>Ask in Indonesian or English — the reply language follows the question.</em></p>
@@ -35,55 +70,69 @@ TypeScript API, so phpMyAdmin is not needed.
 
 <p align="center"><em>Admin panel: 50 perfumes, 10 brands, 26 scent families, with image upload.</em></p>
 
-## How it works
+## Features
 
+- **Grounded recommendations** — every card is a database row, joined by id.
+- **Bilingual by detection** — Indonesian or English, decided per message.
+- **Provider chain** — Kenari (primary), Groq, Hugging Face; the first that
+  answers wins, and a rejected `reasoning_effort` is retried without it.
+- **Voice and vision input** — Whisper transcription, image-based queries.
+- **Persistent sessions** — transcripts in MySQL, deletable with cascade.
+- **Admin panel** — catalogue CRUD with image upload, no separate tooling.
+- **Media on a CDN** — uploads are committed to a GitHub repo and served via
+  jsDelivr, because `i.ibb.co` is DNS-sinkholed by some Indonesian ISPs.
+- **No frontend build** — one `index.html`, served by the same process.
+
+## Architecture
+
+```mermaid
+flowchart LR
+  B[Browser<br/>index.html] -->|POST /api/chat| H[Hono app<br/>src/index.ts]
+  A[Admin panel<br/>/admin/] -->|Bearer token| H
+  H --> C[Chat route<br/>src/routes/chat.ts]
+  C --> D[(MySQL<br/>perfumes)]
+  C --> L{Provider chain}
+  L --> K[Kenari]
+  L --> G[Groq]
+  L --> F[Hugging Face]
+  C --> S[(chat_sessions<br/>chat_messages)]
+  H --> M[Media upload<br/>src/storage.ts]
+  M --> GH[GitHub repo] --> CDN[jsDelivr]
 ```
-POST /api/chat
-  -> catalogue rows loaded from MySQL (src/types.ts)
-  -> system prompt: reply in the user's language, pick TOP 3, JSON only
-  -> provider chain: Kenari -> Groq -> Hugging Face
-  -> JSON parsed, each recommendation id mapped back to its catalogue row
-  -> unknown ids dropped; the client only ever sees real rows
-```
 
-The model can only *select* from the catalogue, never invent a perfume: the
-response is joined against the database by id before it reaches the page.
+## Quick start (local, XAMPP)
 
-## Stack
-
-| Layer | Choice |
-|---|---|
-| Runtime | Bun 1.3+ |
-| HTTP | Hono 4 |
-| Database | MySQL / MariaDB (`mysql2`), utf8mb4 |
-| Frontend | single-file HTML/CSS/JS, no build step |
-| Media | committed to a GitHub repo, served via jsDelivr |
-| LLM | Kenari (primary), Groq, Hugging Face (fallbacks) |
-
-## Local development (XAMPP)
-
-Prerequisites: Bun, and XAMPP at `/opt/lampp` with its MySQL/MariaDB.
+Prerequisites: [Bun](https://bun.sh) 1.3+ and XAMPP at `/opt/lampp` with its
+MySQL/MariaDB.
 
 ```bash
+git clone https://github.com/Ellbaayy/Loreal.git
+cd Loreal
+
 cp .env.example .env          # DB_USER=root, DB_PASSWORD empty (XAMPP default)
 ./scripts/db.sh start         # sudo /opt/lampp/lampp startmysql + wait
 ./scripts/db.sh init          # schema.sql + seed.sql (50 perfumes)
+
 bun install
 bun run src/index.ts          # http://localhost:7860
 ```
 
-`scripts/db.sh` also has `stop`, `status`, `reset` (drop + reload) and `cli`
-(mysql shell). It probes the server with `mariadb-admin` because XAMPP's own
-`lampp status` greps for `netstat`, which is not installed on this machine.
+Open <http://localhost:7860> for the app and
+<http://localhost:7860/admin/> for the panel (password from `ADMIN_PASSWORD`,
+default `group3jaya` — change it before exposing the app).
+
+`scripts/db.sh` also provides `stop`, `status`, `reset` (drop + reload) and
+`cli` (mysql shell). It probes the server with `mariadb-admin` because XAMPP's
+own `lampp status` greps for `netstat`, which is not installed on every distro.
 
 ## Database
 
-Everything needed to rebuild the database is in the repo:
+Everything needed to rebuild the database is in the repository.
 
 | File | Contents |
 |---|---|
 | `schema.sql` | `lore_ai_db`, tables `perfumes`, `chat_sessions`, `chat_messages` |
-| `seed.sql` | the 50-perfume catalogue, ids preserved |
+| `seed.sql` | the 50-perfume catalogue, original ids preserved |
 
 ```bash
 ./scripts/db.sh reset         # drop, recreate, reseed
@@ -97,7 +146,7 @@ Everything needed to rebuild the database is in the repo:
 | `chat_messages` | messages, FK to `chat_sessions` with `ON DELETE CASCADE` |
 
 `chat_messages.role` is `VARCHAR(16)`, not `ENUM`: the client posts arbitrary
-role strings and a rejected value would abort the whole insert loop.
+role strings, and a rejected value would abort the whole insert loop.
 
 ## API
 
@@ -109,15 +158,58 @@ role strings and a rejected value would abort the whole insert loop.
 | `GET` | `/api/sessions` | last 50 sessions with message counts |
 | `GET` | `/api/sessions/:id/messages` | transcript |
 | `DELETE` | `/api/sessions/:id` | deletes messages via cascade |
-| `POST` | `/api/shop-info` | Shopee/Tokopedia/Lazada/Maps links |
+| `POST` | `/api/shop-info` | Shopee / Tokopedia / Lazada / Maps links |
 | `POST` | `/api/admin/login` | password → bearer token |
-| `GET/POST/PUT/DELETE` | `/api/admin/perfumes[/:id]` | catalogue CRUD, multipart image |
+| `GET` `POST` `PUT` `DELETE` | `/api/admin/perfumes[/:id]` | catalogue CRUD, multipart image |
 
-Admin panel: http://localhost:7860/admin/ — password from `ADMIN_PASSWORD`
-(default `group3jaya`; change it before exposing the app).
+## Configuration
 
-## Docker (alternative)
+All variables are read from the environment; `.env` is loaded by Bun.
 
-`docker compose up -d --build` runs the app plus its own MariaDB. The container
-database is published on `127.0.0.1:3307` so it does not collide with XAMPP on
-3306; inside the compose network the app uses `db:3306` with user `lore`.
+| Variable | Default | Purpose |
+|---|---|---|
+| `APP_PORT` | `7860` | HTTP port |
+| `DB_HOST` `DB_PORT` `DB_NAME` | `127.0.0.1` `3306` `lore_ai_db` | database target |
+| `DB_USER` `DB_PASSWORD` | `root` / empty | XAMPP defaults |
+| `DB_SSL` | `false` | TLS for managed MySQL |
+| `ADMIN_PASSWORD` | `group3jaya` | bearer token for `/api/admin/*` |
+| `KENARI_API_KEY` | — | primary provider |
+| `GROQ_API_KEY` | — | fallback chat + Whisper |
+| `HF_TOKEN` | — | final fallback chat/vision |
+| `GITHUB_MEDIA_TOKEN` | — | uploads; empty disables them |
+| `MEDIA_REPO` `MEDIA_BRANCH` `MEDIA_CDN_BASE` | `Ellbaayy/lore-ai-media` `main` | media target |
+
+## Project structure
+
+```
+.
+├── src/
+│   ├── index.ts          Hono app, CORS, static serving
+│   ├── db.ts             mysql2 pool, query/execute helpers
+│   ├── llm.ts            provider chain, vision, transcription
+│   ├── storage.ts        GitHub + jsDelivr media upload
+│   ├── types.ts          domain types, catalogue loader
+│   └── routes/
+│       ├── chat.ts       chat, audio, image, sessions
+│       ├── shop.ts       marketplace links
+│       └── admin.ts      login, catalogue CRUD
+├── admin/index.html      admin panel
+├── index.html            single-page frontend
+├── schema.sql            database schema
+├── seed.sql              50-perfume catalogue
+├── scripts/db.sh         XAMPP start/stop/init/reset/cli
+├── docker-compose.yml    app + MariaDB (host port 3307)
+└── docs/                 logo and screenshots
+```
+
+## Deployment
+
+**Docker** — `docker compose up -d --build` runs the app plus its own MariaDB.
+The container database is published on `127.0.0.1:3307` so it does not collide
+with XAMPP on 3306; inside the compose network the app uses `db:3306` with user
+`lore`.
+
+**Hugging Face Space** — the `README.md` front matter declares `sdk: docker`
+and `app_port: 7860`, so the same `Dockerfile` deploys unchanged. Set the
+secrets (`DB_*`, `KENARI_API_KEY`, `ADMIN_PASSWORD`, media variables) in the
+Space settings, never in the repository.
