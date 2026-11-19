@@ -1,3 +1,12 @@
+---
+title: LORE-AI
+emoji: 🧴
+colorFrom: purple
+colorTo: gray
+sdk: docker
+app_port: 7860
+pinned: false
+---
 <h1 align="center">🧴 L'ORE-AI — AI Fragrance Concierge</h1>
 
 <p align="center">
