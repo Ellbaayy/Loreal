@@ -1409,7 +1409,16 @@ function restoreSession(s) {
 })();
 
 window.addEventListener('load', () => {
-  setTimeout(() => { document.getElementById('ldr').classList.add('out'); setTimeout(() => document.getElementById('ldr').style.display = 'none', 1400); }, 4200);
+  // The CSS build is clocked from first paint, so count down from there too —
+  // otherwise a slow load event leaves the finished splash frozen on screen.
+  const paint = performance.getEntriesByType('paint').find((e) => e.name === 'first-paint');
+  const startedAt = paint ? paint.startTime : performance.now();
+  const wait = Math.max(0, 4600 - (performance.now() - startedAt));
+  setTimeout(() => {
+    const ldr = document.getElementById('ldr');
+    ldr.classList.add('out');
+    setTimeout(() => { ldr.style.display = 'none'; }, 1400);
+  }, wait);
   const saved = loadSession();
   if (saved && saved.history && saved.history.length > 0) {
     showSessionBanner(saved);
