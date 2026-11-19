@@ -1517,24 +1517,24 @@ function renderCards(items) {
   fl.innerHTML = '';
   items.forEach((item, i) => {
     if (!item) return;
-    const imgUrl = item.image_url || BGIMGS[i % 3];
+    const imgUrl = safeUrl(item.image_url, BGIMGS[i % 3]);
     const proj = (item.projection || 'Medium');
     const pc = proj.toLowerCase() === 'soft' ? 't-sft' : proj.toLowerCase() === 'strong' ? 't-str' : 't-med';
     const card = document.createElement('div');
     card.className = 'pcard';
     card.onclick = () => showDetail(item, i);
     card.innerHTML = `
-      <div class="pcard-bg" style="background-image:url('${imgUrl}')"></div>
+      <div class="pcard-bg" style="background-image:url('${escHtml(imgUrl)}')"></div>
       <div class="pcard-veil"></div><div class="pcard-glass"></div>
       <div class="pcard-body">
-        <div class="pcard-brand">${item.brand || ''}</div>
-        <div class="pcard-name">${item.name || 'Fragrance'}</div>
+        <div class="pcard-brand">${escHtml(item.brand)}</div>
+        <div class="pcard-name">${escHtml(item.name || 'Fragrance')}</div>
         <div class="pcard-tags">
-          <span class="tag t-pop">Pop ${item.popularity_score ?? 5}/10</span>
-          <span class="tag t-nic">Niche ${item.niche_score ?? 5}/10</span>
-          <span class="tag ${pc}">${proj}</span>
+          <span class="tag t-pop">Pop ${escHtml(item.popularity_score ?? 5)}/10</span>
+          <span class="tag t-nic">Niche ${escHtml(item.niche_score ?? 5)}/10</span>
+          <span class="tag ${pc}">${escHtml(proj)}</span>
         </div>
-        <div class="pcard-desc">${item.reason || ''}</div>
+        <div class="pcard-desc">${escHtml(item.reason)}</div>
       </div>`;
     fl.appendChild(card);
   });
@@ -1579,8 +1579,8 @@ function showDetail(item, idx) {
   const safe = item.odor_safe === true || item.odor_safe === 'true';
   const sc = safe ? '#78c898' : '#e08080';
   const analysis = item.detailed_analysis || item.reason || '';
-  const nm = (item.name || '').replace(/'/g, "\\'");
-  const br = (item.brand || '').replace(/'/g, "\\'");
+  const nm = String(item.name || '');
+  const br = String(item.brand || '');
   const itemKey = (br + '_' + nm).replace(/\s+/g, '_');
   const savedFeedback = getFeedback(itemKey);
   const likedClass = savedFeedback === 'liked' ? 'liked' : '';
@@ -1588,42 +1588,42 @@ function showDetail(item, idx) {
 
   body.innerHTML = `
     <div style="grid-column:1"><button class="btn-back" onclick="go('results')">← Results</button>
-      <div class="detail-img-col"><div class="detail-img-wrap"><img src="${imgUrl}" alt="${item.name}" onerror="this.src='https://placehold.co/400x600/18141e/fff?text=No+Image'"></div></div>
+      <div class="detail-img-col"><div class="detail-img-wrap"><img src="${escHtml(safeUrl(imgUrl, 'https://placehold.co/400x600/18141e/fff?text=No+Image'))}" alt="${escHtml(item.name)}" onerror="this.src='https://placehold.co/400x600/18141e/fff?text=No+Image'"></div></div>
     </div>
     <div class="detail-info-col">
-      <div class="detail-brand">${item.brand || 'Unknown Brand'}</div>
-      <div class="detail-name">${item.name || 'Fragrance'}</div>
+      <div class="detail-brand">${escHtml(item.brand || 'Unknown Brand')}</div>
+      <div class="detail-name">${escHtml(item.name || 'Fragrance')}</div>
       <div class="detail-feedback-strip">
         <span>This match?</span>
-        <button class="dfb-btn ${likedClass}" id="dfb-like" onclick="saveDetailFeedback('${itemKey}','liked')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline;vertical-align:middle;margin-right:5px"><path d="M7 10v12"/><path d="M15 5.88L14 10h5.83a2 2 0 011.92 2.56l-2.33 8A2 2 0 0117.5 22H4a2 2 0 01-2-2v-8a2 2 0 012-2h2.76a2 2 0 001.79-1.11L12 2a3.13 3.13 0 013 3.88z"/></svg>Loved it</button>
-        <button class="dfb-btn ${dislikedClass}" id="dfb-dislike" onclick="saveDetailFeedback('${itemKey}','disliked')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline;vertical-align:middle;margin-right:5px"><path d="M17 14V2"/><path d="M9 18.12L10 14H4.17a2 2 0 01-1.92-2.56l2.33-8A2 2 0 016.5 2H20a2 2 0 012 2v8a2 2 0 01-2 2h-2.76a2 2 0 00-1.79 1.11L12 22a3.13 3.13 0 01-3-3.88z"/></svg>Not for me</button>
+        <button class="dfb-btn ${likedClass}" id="dfb-like" onclick="saveDetailFeedback(${jsArg(itemKey)},'liked')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline;vertical-align:middle;margin-right:5px"><path d="M7 10v12"/><path d="M15 5.88L14 10h5.83a2 2 0 011.92 2.56l-2.33 8A2 2 0 0117.5 22H4a2 2 0 01-2-2v-8a2 2 0 012-2h2.76a2 2 0 001.79-1.11L12 2a3.13 3.13 0 013 3.88z"/></svg>Loved it</button>
+        <button class="dfb-btn ${dislikedClass}" id="dfb-dislike" onclick="saveDetailFeedback(${jsArg(itemKey)},'disliked')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline;vertical-align:middle;margin-right:5px"><path d="M17 14V2"/><path d="M9 18.12L10 14H4.17a2 2 0 01-1.92-2.56l2.33-8A2 2 0 016.5 2H20a2 2 0 012 2v8a2 2 0 01-2 2h-2.76a2 2 0 00-1.79 1.11L12 22a3.13 3.13 0 01-3-3.88z"/></svg>Not for me</button>
       </div>
-      <div class="detail-analysis">"${analysis}"</div>
+      <div class="detail-analysis">"${escHtml(analysis)}"</div>
       <div class="score-row">
-        <div class="score-blob"><div class="score-n">${item.popularity_score ?? 5}</div><div class="score-l">Popularity</div></div>
-        <div class="score-blob"><div class="score-n">${item.niche_score ?? 5}</div><div class="score-l">Niche</div></div>
+        <div class="score-blob"><div class="score-n">${escHtml(item.popularity_score ?? 5)}</div><div class="score-l">Popularity</div></div>
+        <div class="score-blob"><div class="score-n">${escHtml(item.niche_score ?? 5)}</div><div class="score-l">Niche</div></div>
         <div class="score-blob" style="border-color:${sc}30"><div class="score-n" style="font-size:1rem;padding-top:8px"><span class="safe-pill" style="background:${sc};color:#111">${safe ? 'SAFE' : 'CAUTION'}</span></div><div class="score-l">Odor Safety</div></div>
       </div>
       <div class="info-pile">
         <div class="info-card"><div class="info-card-title">Scent Pyramid</div>
-          <div class="info-row"><span class="info-k">Top</span><span class="info-v">${item.top_notes || '-'}</span></div>
-          <div class="info-row"><span class="info-k">Heart</span><span class="info-v">${item.middle_notes || '-'}</span></div>
-          <div class="info-row"><span class="info-k">Base</span><span class="info-v">${item.base_notes || '-'}</span></div>
+          <div class="info-row"><span class="info-k">Top</span><span class="info-v">${escHtml(item.top_notes || '-')}</span></div>
+          <div class="info-row"><span class="info-k">Heart</span><span class="info-v">${escHtml(item.middle_notes || '-')}</span></div>
+          <div class="info-row"><span class="info-k">Base</span><span class="info-v">${escHtml(item.base_notes || '-')}</span></div>
         </div>
         <div class="info-card"><div class="info-card-title">Performance</div>
-          <div class="info-row"><span class="info-k">Longevity</span><span class="info-v">${item.longevity || '-'}</span></div>
-          <div class="info-row"><span class="info-k">Projection</span><span class="info-v">${item.projection || '-'}</span></div>
-          <div class="info-row"><span class="info-k">Best For</span><span class="info-v">${item.best_occasion || '-'}</span></div>
+          <div class="info-row"><span class="info-k">Longevity</span><span class="info-v">${escHtml(item.longevity || '-')}</span></div>
+          <div class="info-row"><span class="info-k">Projection</span><span class="info-v">${escHtml(item.projection || '-')}</span></div>
+          <div class="info-row"><span class="info-k">Best For</span><span class="info-v">${escHtml(item.best_occasion || '-')}</span></div>
         </div>
         <div class="info-card" style="border-color:${sc}25"><div class="info-card-title">Odor Safety</div>
-          <div class="safe-row"><span style="font-size:.82rem;color:rgba(247,243,240,.5);line-height:1.6">${item.odor_safe_reason || 'No safety data.'}</span></div>
+          <div class="safe-row"><span style="font-size:.82rem;color:rgba(247,243,240,.5);line-height:1.6">${escHtml(item.odor_safe_reason || 'No safety data.')}</span></div>
         </div>
         <div class="info-card"><div class="info-card-title">Who Is This For?</div>
-          <p style="font-size:.82rem;color:rgba(247,243,240,.5);line-height:1.7">${item.who_is_it_for || 'Anyone seeking quality.'}</p>
+          <p style="font-size:.82rem;color:rgba(247,243,240,.5);line-height:1.7">${escHtml(item.who_is_it_for || 'Anyone seeking quality.')}</p>
         </div>
       </div>
       <div style="display:flex;gap:14px;flex-wrap:wrap">
-        <button class="btn-pill" onclick="handleGetIt('${nm}','${br}')">Get It Now <span class="arr">→</span></button>
+        <button class="btn-pill" onclick="handleGetIt(${jsArg(nm)},${jsArg(br)})">Get It Now <span class="arr">→</span></button>
         <button class="btn-outline" onclick="go('results')">← All Matches</button>
       </div>
     </div>`;
@@ -1643,16 +1643,36 @@ function setupHoverZoom() {
   wrap.addEventListener('mouseleave', () => { img.style.transformOrigin = 'center center'; });
 }
 
+// Anonymous visitor id: scopes chat history to this browser. The server mints
+// one if this header is missing and returns it in the response.
+const VISITOR_KEY = 'lore_visitor_v1';
+function getVisitorId() {
+  let id = localStorage.getItem(VISITOR_KEY);
+  if (!id || !/^[A-Za-z0-9_-]{8,64}$/.test(id)) {
+    id = (crypto.randomUUID ? crypto.randomUUID() : String(Date.now()) + Math.random().toString(36).slice(2));
+    localStorage.setItem(VISITOR_KEY, id);
+  }
+  return id;
+}
+function apiFetch(url, options) {
+  const opts = options || {};
+  const headers = Object.assign({}, opts.headers || {}, { 'x-visitor-id': getVisitorId() });
+  return fetch(url, Object.assign({}, opts, { headers }));
+}
+
 async function handleGetIt(name, brand) {
   const modal = document.getElementById('shop-modal');
   const ml = document.getElementById('ml'), mb = document.getElementById('mb');
   modal.style.display = 'block'; ml.style.display = 'block'; mb.style.display = 'none';
   try {
-    const r = await fetch('/api/shop-info', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name, brand }) });
+    const r = await apiFetch('/api/shop-info', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name, brand }) });
     const d = await r.json();
     ml.style.display = 'none'; mb.style.display = 'block';
     const ol = document.getElementById('mol');
-    ol.innerHTML = (d.online || []).map(l => `<a href="${l.url}" target="_blank" class="mlink">Buy on ${l.platform}</a>`).join('') || '<p style="opacity:.4;font-size:.8rem">No links available.</p>';
+    ol.innerHTML = (d.online || []).map(l => {
+      const href = safeUrl(l.url, '');
+      return href ? `<a href="${escHtml(href)}" target="_blank" rel="noopener noreferrer" class="mlink">Buy on ${escHtml(l.platform)}</a>` : '';
+    }).join('') || '<p style="opacity:.4;font-size:.8rem">No links available.</p>';
     if (d.offline) { document.getElementById('madvice').textContent = d.offline.advice || ''; document.getElementById('mmap').href = d.offline.map_url || '#'; }
   } catch (e) {
     ml.style.display = 'none'; mb.style.display = 'block';
@@ -1712,7 +1732,7 @@ function groupSessionsByDate(sessions) {
 async function loadHistorySidebar() {
   const list = document.getElementById('hist-list');
   try {
-    const res = await fetch('/api/sessions');
+    const res = await apiFetch('/api/sessions');
     const data = await res.json();
     const sessions = data.sessions || [];
     if (!sessions.length) {
@@ -1744,7 +1764,7 @@ async function loadHistorySidebar() {
 
 async function loadSessionById(sessionId) {
   try {
-    const res = await fetch(`/api/sessions/${sessionId}/messages`);
+    const res = await apiFetch(`/api/sessions/${sessionId}/messages`);
     const data = await res.json();
     const msgs = data.messages || [];
     activeSessionId = sessionId;
@@ -1788,7 +1808,7 @@ async function deleteSession(sessionId) {
   if (activeSessionId === sessionId) startNewSession();
 
   try {
-    await fetch(`/api/sessions/${sessionId}`, { method: 'DELETE' });
+    await apiFetch(`/api/sessions/${sessionId}`, { method: 'DELETE' });
   } catch(e) {}
 }
 
@@ -1812,7 +1832,19 @@ function startNewSession() {
 }
 
 function escHtml(s) {
-  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  return String(s == null ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+// Argument for an inline handler: JSON-encode, then HTML-escape so quotes
+// cannot close the attribute and backslashes cannot escape the string.
+function jsArg(v) {
+  return escHtml(JSON.stringify(String(v == null ? '' : v)));
+}
+// Only http(s) and relative URLs reach src/href; javascript: and data: die here.
+function safeUrl(u, fallback) {
+  const s = String(u || '').trim();
+  if (!s) return fallback || '';
+  if (/^https?:\/\//i.test(s) || /^\/(?!\/)/.test(s)) return s;
+  return fallback || '';
 }
 
 function addMessage(text, sender, imageUrl) {
@@ -1823,12 +1855,13 @@ function addMessage(text, sender, imageUrl) {
   const savedFb = getFeedback('msg_' + id);
   const likedClass = savedFb === 'liked' ? 'liked' : '';
   const dislikedClass = savedFb === 'disliked' ? 'disliked' : '';
-  const imgHtml = imageUrl ? `<div class="msg-img"><img src="${imageUrl}" alt="Uploaded image" onclick="window.open(this.src)"></div>` : '';
+  const safeImg = imageUrl ? safeUrl(imageUrl, '') : '';
+  const imgHtml = safeImg ? `<div class="msg-img"><img src="${escHtml(safeImg)}" alt="Uploaded image" onclick="window.open(this.src)"></div>` : '';
   div.innerHTML = `
     <div class="msg-avatar">${sender === 'ai' ? '✦' : 'You'}</div>
     <div>
       ${imgHtml}
-      <div class="msg-bubble">${text.replace(/\n/g, '<br>')}</div>
+      <div class="msg-bubble">${escHtml(text).replace(/\n/g, '<br>')}</div>
       ${sender === 'ai' ? `
         <div class="msg-feedback">
           <button class="fb-btn ${likedClass}" title="Helpful" onclick="saveMsgFeedback(${id},'liked',this)"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 10v12"/><path d="M15 5.88L14 10h5.83a2 2 0 011.92 2.56l-2.33 8A2 2 0 0117.5 22H4a2 2 0 01-2-2v-8a2 2 0 012-2h2.76a2 2 0 001.79-1.11L12 2a3.13 3.13 0 013 3.88z"/></svg></button>
@@ -1900,7 +1933,7 @@ chatSend.addEventListener('click', handleChatSend);
 chatInput.addEventListener('keydown', e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleChatSend(); } });
 
 async function callAIBackend(history) {
-  const res = await fetch('/api/chat', {
+  const res = await apiFetch('/api/chat', {
     method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ messages: history, session_id: activeSessionId || null })
   });
   if (!res.ok) {
@@ -1908,6 +1941,7 @@ async function callAIBackend(history) {
     throw new Error(`Backend error ${res.status}: ${errText}`);
   }
   const data = await res.json();
+  if (data.visitor_id) localStorage.setItem(VISITOR_KEY, data.visitor_id);
   if (data.session_id) activeSessionId = data.session_id;
   return {
     text: data.text || "I'm listening. Tell me more about your preferences.",

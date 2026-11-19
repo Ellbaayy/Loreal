@@ -9,6 +9,9 @@ const DB_SSL = process.env.DB_SSL === 'true';
 
 let pool: mysql.Pool | null = null;
 
+/** Values accepted by mysql2's prepared statements. */
+type SqlParam = string | number | bigint | boolean | Date | null | Buffer | Uint8Array;
+
 export function getPool(): mysql.Pool {
   if (!pool) {
     pool = mysql.createPool({
@@ -26,18 +29,50 @@ export function getPool(): mysql.Pool {
   return pool;
 }
 
-export async function query<T = any>(sql: string, params?: any[]): Promise<T[]> {
+/**
+ * Read query. Returns [] on failure so a database outage degrades to the
+ * built-in catalogue instead of a 500 — but the failure is logged, because a
+ * silent [] is indistinguishable from an empty table.
+ */
+export async function query<T>(sql: string, params: SqlParam[] = []): Promise<T[]> {
   try {
-    const conn = getPool();
-    const [rows] = await conn.execute<any[]>(sql, params || []);
-    return rows;
-  } catch {
+    const [rows] = await getPool().execute(sql, params);
+    return rows as T[];
+  } catch (err) {
+    console.error('[DB] query failed:', (err as Error).message);
     return [];
   }
 }
 
-export async function execute(sql: string, params?: any[]): Promise<{ affectedRows: number; insertId: number }> {
-  const conn = getPool();
-  const [result] = await conn.execute<any>(sql, params || []);
-  return { affectedRows: result.affectedRows, insertId: result.insertId };
+/** Write query. Throws: callers decide whether a failed write is fatal. */
+export async function execute(
+  sql: string,
+  params: SqlParam[] = [],
+): Promise<{ affectedRows: number; insertId: number }> {
+  const [result] = await getPool().execute(sql, params);
+  const header = result as mysql.ResultSetHeader;
+  return { affectedRows: header.affectedRows, insertId: header.insertId };
+}
+
+/**
+ * Idempotent schema upgrade for existing databases. `schema.sql` only runs on
+ * a fresh volume, so a deployed instance would otherwise miss new columns.
+ * Written against information_schema because MySQL 8 has no
+ * `ADD COLUMN IF NOT EXISTS`.
+ */
+export async function ensureSchema(): Promise<void> {
+  const columns = await query<{ n: number }>(
+    "SELECT COUNT(*) AS n FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'chat_sessions' AND COLUMN_NAME = 'visitor_id'",
+  );
+  if (!columns[0]?.n) {
+    await execute("ALTER TABLE chat_sessions ADD COLUMN visitor_id VARCHAR(64) NOT NULL DEFAULT ''");
+    console.log('[DB] added chat_sessions.visitor_id');
+  }
+  const indexes = await query<{ n: number }>(
+    "SELECT COUNT(*) AS n FROM information_schema.STATISTICS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'chat_sessions' AND INDEX_NAME = 'idx_chat_sessions_visitor'",
+  );
+  if (!indexes[0]?.n) {
+    await execute('ALTER TABLE chat_sessions ADD KEY idx_chat_sessions_visitor (visitor_id, updated_at)');
+    console.log('[DB] added idx_chat_sessions_visitor');
+  }
 }

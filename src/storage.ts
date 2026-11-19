@@ -16,12 +16,21 @@ const REPO = process.env.MEDIA_REPO || ''
 const BRANCH = process.env.MEDIA_BRANCH || 'main'
 const CDN_BASE = (process.env.MEDIA_CDN_BASE || '').replace(/\/+$/, '')
 
-const MIME_BY_EXT: Record<string, string> = {
-  jpg: 'image/jpeg',
-  jpeg: 'image/jpeg',
-  png: 'image/png',
-  webp: 'image/webp',
-  gif: 'image/gif',
+/**
+ * Identify an image from its magic bytes. The client-supplied filename and
+ * Content-Type are attacker-controlled, so neither is trusted: an upload is
+ * only accepted when the bytes really are one of the four supported formats.
+ */
+export function sniffImage(bytes: Uint8Array): { ext: string; mime: string } | null {
+  if (bytes.length < 12) return null
+  const b = bytes
+  if (b[0] === 0xff && b[1] === 0xd8 && b[2] === 0xff) return { ext: 'jpg', mime: 'image/jpeg' }
+  if (b[0] === 0x89 && b[1] === 0x50 && b[2] === 0x4e && b[3] === 0x47) return { ext: 'png', mime: 'image/png' }
+  if (b[0] === 0x47 && b[1] === 0x49 && b[2] === 0x46 && b[3] === 0x38) return { ext: 'gif', mime: 'image/gif' }
+  const riff = b[0] === 0x52 && b[1] === 0x49 && b[2] === 0x46 && b[3] === 0x46
+  const webp = b[8] === 0x57 && b[9] === 0x45 && b[10] === 0x42 && b[11] === 0x50
+  if (riff && webp) return { ext: 'webp', mime: 'image/webp' }
+  return null
 }
 
 function toBase64(bytes: ArrayBuffer): string {
@@ -64,14 +73,15 @@ export async function uploadMedia(
   try {
     const bytes = data instanceof File ? await data.arrayBuffer() : data
     const name = filename || (data instanceof File ? data.name : 'image.jpg')
-    const ext = name.split('.').pop()?.toLowerCase() || 'jpg'
-    const contentType = MIME_BY_EXT[ext] || 'application/octet-stream'
-    if (contentType === 'application/octet-stream') {
-      console.error(`[MEDIA] Unsupported extension: ${ext}`)
+    const sniffed = sniffImage(new Uint8Array(bytes))
+    if (!sniffed) {
+      console.error('[MEDIA] Rejected upload: not a supported image')
       return null
     }
-
-    const path = `images/${slugify(name)}`
+    const contentType = sniffed.mime
+    // Keep the caller's stem, but the extension comes from the bytes.
+    const stem = name.replace(/\.[^.]*$/, '')
+    const path = `images/${slugify(`${stem}.${sniffed.ext}`)}`
     const res = await fetch(`https://api.github.com/repos/${REPO}/contents/${path}`, {
       method: 'PUT',
       headers: {

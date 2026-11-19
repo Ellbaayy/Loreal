@@ -1,0 +1,49 @@
+services:
+  db:
+    image: mariadb:11.4
+    restart: unless-stopped
+    environment:
+      # Fixed container credentials: .env holds the XAMPP (root, no password)
+      # values for local runs, which must not leak into the container.
+      MARIADB_ROOT_PASSWORD: root_password
+      MARIADB_DATABASE: lore_ai_db
+      MARIADB_USER: lore
+      MARIADB_PASSWORD: lore_password
+    ports:
+      # 3307 on the host: 3306 belongs to XAMPP's MySQL.
+      - "127.0.0.1:3307:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+      # Run once, on an empty data volume, in filename order.
+      - ./schema.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro
+      - ./seed.sql:/docker-entrypoint-initdb.d/02-seed.sql:ro
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+      start_period: 10s
+
+  app:
+    build: .
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      # Overrides .env: inside the compose network the DB is the `db` service.
+      DB_HOST: db
+      DB_PORT: "3306"
+      DB_USER: lore
+      DB_PASSWORD: lore_password
+      # Provider keys from the shell win over the (empty) values in .env.
+      KENARI_API_KEY: ${KENARI_API_KEY:-}
+      GROQ_API_KEY: ${GROQ_API_KEY:-}
+      HF_TOKEN: ${HF_TOKEN:-}
+      GITHUB_MEDIA_TOKEN: ${GITHUB_MEDIA_TOKEN:-}
+    ports:
+      - "7860:7860"
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  db_data:
