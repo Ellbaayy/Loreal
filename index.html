@@ -1599,7 +1599,7 @@ async function loadHistorySidebar() {
       html += `<div class="hist-group-label">${g}</div>`;
       groups[g].forEach(s => {
         const isActive = s.id == activeSessionId;
-        html += `<div class="hist-item${isActive?' active':''}" data-id="${s.id}" onclick="loadSession(${s.id})">
+        html += `<div class="hist-item${isActive?' active':''}" data-id="${s.id}" onclick="loadSessionById(${s.id})">
           <div class="hist-item-icon">✦</div>
           <div class="hist-item-body">
             <div class="hist-item-title">${escHtml(s.title)}</div>
@@ -1615,7 +1615,7 @@ async function loadHistorySidebar() {
   }
 }
 
-async function loadSession(sessionId) {
+async function loadSessionById(sessionId) {
   try {
     const res = await fetch(`/api/sessions/${sessionId}/messages`);
     const data = await res.json();
