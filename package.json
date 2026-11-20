@@ -5,7 +5,8 @@
   "private": true,
   "scripts": {
     "build": "bun install --frozen-lockfile && tsc --noEmit",
-    "server": "bun run src/index.ts"
+    "server": "bun run src/index.ts",
+    "deploy:space": "bash scripts/deploy-space.sh"
   },
   "devDependencies": {
     "@types/bun": "latest"
