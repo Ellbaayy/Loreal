@@ -18,7 +18,10 @@ const MAX_JSON = 256 * 1024; // chat payloads are text
 // injection it is meant to stop. Escaping at the render site is the real fix.
 app.use('*', async (c, next) => {
   c.header('X-Content-Type-Options', 'nosniff');
-  c.header('X-Frame-Options', 'DENY');
+  // The Space embeds this app in an iframe on huggingface.co, so framing must be
+  // allowed for that one host — DENY blanks the Space with a broken-page icon.
+  c.header('X-Frame-Options', 'SAMEORIGIN');
+  c.header('Content-Security-Policy', "frame-ancestors 'self' https://huggingface.co https://*.huggingface.co");
   c.header('Referrer-Policy', 'no-referrer');
   c.header('Permissions-Policy', 'geolocation=(), camera=(self), microphone=(self)');
   await next();
